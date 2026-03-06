@@ -1,5 +1,7 @@
+import Link from "next/link";
 import type { Prisma } from "@prisma/client";
 
+import { WithdrawCapitalButton } from "@/components/withdraw-capital-button";
 import { ImportToPandaDocButton } from "@/components/import-to-pandadoc-button";
 import { PandaDocStatusBadge } from "@/components/pandadoc-status-badge";
 import { StatusBadge } from "@/components/status-badge";
@@ -11,11 +13,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { evaluateFactoringEligibility } from "@/lib/factoring/eligibility";
 import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
 
 type FactoringInvoiceRow = Prisma.ImportedInvoiceGetPayload<{
   include: {
     documentLinks: true;
+    factoringOffer: true;
+    factoringTransactions: {
+      include: {
+        capitalSource: true;
+      };
+    };
   };
 }>;
 
@@ -46,6 +55,7 @@ export function InvoiceTable({
             <TableHead>Amount</TableHead>
             <TableHead>Due date</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Factoring</TableHead>
             <TableHead>PandaDoc</TableHead>
             <TableHead>Last synced</TableHead>
             <TableHead className="text-right">Action</TableHead>
@@ -54,6 +64,13 @@ export function InvoiceTable({
         <TableBody>
           {invoices.map((invoice) => {
             const link = invoice.documentLinks[0] ?? null;
+            const latestTransaction = invoice.factoringTransactions[0] ?? null;
+            const eligibility = evaluateFactoringEligibility({
+              balanceAmount: invoice.balanceAmount,
+              dueDate: invoice.dueDate,
+              normalizedStatus: invoice.normalizedStatus,
+              transactions: invoice.factoringTransactions,
+            });
             const disabledReason = !pandaDocConnected
               ? "Connect PandaDoc first."
               : !pandaDocImportEnabled
@@ -83,6 +100,49 @@ export function InvoiceTable({
                 </TableCell>
                 <TableCell>
                   <div className="space-y-2">
+                    {latestTransaction ? (
+                      <>
+                        <StatusBadge status={latestTransaction.status} />
+                        <div className="max-w-56 text-xs text-muted-foreground">
+                          {latestTransaction.transactionReference}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Net{" "}
+                          {formatCurrency(
+                            latestTransaction.netProceeds.toString(),
+                            latestTransaction.settlementCurrency,
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <StatusBadge status={eligibility.status} />
+                        <div className="text-xs text-muted-foreground">
+                          {invoice.factoringOffer
+                            ? `Indicative net ${formatCurrency(
+                                invoice.factoringOffer.netProceeds.toString(),
+                                invoice.factoringOffer.settlementCurrency,
+                              )}`
+                            : "No terms generated yet"}
+                        </div>
+                        {eligibility.reason ? (
+                          <div className="max-w-56 text-xs text-muted-foreground">
+                            {eligibility.reason}
+                          </div>
+                        ) : (
+                          <div className="text-xs text-muted-foreground">
+                            Discount{" "}
+                            {invoice.factoringOffer
+                              ? `${(invoice.factoringOffer.discountRateBps / 100).toFixed(2)}%`
+                              : "TBD"}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="space-y-2">
                     <PandaDocStatusBadge status={link?.pandadocDocumentStatus} />
                     {link?.documentName ? (
                       <div className="max-w-48 text-xs text-muted-foreground">
@@ -96,7 +156,24 @@ export function InvoiceTable({
                 </TableCell>
                 <TableCell>{formatDateTime(invoice.lastSyncedAt)}</TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end">
+                  <div className="flex flex-col items-end gap-2">
+                    {latestTransaction ? (
+                      <Link
+                        className="inline-flex h-10 items-center justify-center rounded-full border border-white/14 bg-white/5 px-5 text-sm font-semibold transition-all duration-300 hover:border-white/24 hover:bg-white/10"
+                        href={`/factoring-dashboard/transactions/${latestTransaction.id}`}
+                      >
+                        View transaction
+                      </Link>
+                    ) : (
+                      <WithdrawCapitalButton
+                        href={
+                          eligibility.eligible
+                            ? `/factoring-dashboard/invoices/${invoice.id}/withdraw`
+                            : undefined
+                        }
+                        disabledReason={eligibility.reason}
+                      />
+                    )}
                     <ImportToPandaDocButton
                       importedInvoiceId={invoice.id}
                       documentStatus={link?.pandadocDocumentStatus}

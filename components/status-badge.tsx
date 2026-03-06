@@ -1,14 +1,34 @@
 import type { ComponentProps } from "react";
-import { InvoiceStatus, IntegrationStatus } from "@prisma/client";
+import {
+  FactoringEligibilityStatus,
+  FactoringTransactionStatus,
+  IntegrationStatus,
+  InvoiceStatus,
+  OnChainExecutionStatus,
+} from "@prisma/client";
 
 import { Badge } from "@/components/ui/badge";
 
-type StatusValue = InvoiceStatus | IntegrationStatus;
+type StatusValue =
+  | InvoiceStatus
+  | IntegrationStatus
+  | FactoringEligibilityStatus
+  | FactoringTransactionStatus
+  | OnChainExecutionStatus;
 
 const variants: Record<StatusValue, ComponentProps<typeof Badge>["variant"]> = {
   CONNECTED: "success",
   DISCONNECTED: "muted",
   ERROR: "destructive",
+  ELIGIBLE: "success",
+  INELIGIBLE: "destructive",
+  PENDING: "warning",
+  FUNDED: "default",
+  REPAID: "success",
+  CANCELLED: "muted",
+  NOT_STARTED: "muted",
+  SIMULATED: "warning",
+  SETTLED: "success",
   OPEN: "default",
   OVERDUE: "warning",
   PAID: "success",

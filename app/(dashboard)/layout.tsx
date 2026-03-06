@@ -18,7 +18,7 @@ export default async function DashboardLayout({
           <div className="space-y-3">
             <AppBrand href="/" compact />
             <p className="max-w-xl text-sm text-muted-foreground">
-              Secure OAuth, invoice import, PandaDoc document creation, and webhook-driven factoring operations.
+              Secure OAuth, QuickBooks invoice sync, Arena StaFi-ready settlement simulation, and PandaDoc factoring operations.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">

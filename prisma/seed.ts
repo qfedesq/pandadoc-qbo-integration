@@ -1,4 +1,16 @@
-import { InvoiceStatus, Provider, PrismaClient } from "@prisma/client";
+import {
+  AccountingSystem,
+  CapitalSourceType,
+  FactoringEligibilityStatus,
+  FactoringEventType,
+  FactoringTransactionStatus,
+  InvoiceStatus,
+  MarketplaceNode,
+  OnChainExecutionStatus,
+  Provider,
+  SettlementMethod,
+  PrismaClient,
+} from "@prisma/client";
 
 import { hashPassword } from "../lib/auth/passwords";
 import { env } from "../lib/env";
@@ -140,30 +152,47 @@ async function seedDemoData(userId: string) {
     },
   });
 
-  const company = await prisma.quickBooksCompany.upsert({
+  const existingCompany = await prisma.quickBooksCompany.findFirst({
     where: {
-      connectionId: quickBooksConnection.id,
-    },
-    update: {
-      realmId: "9130357992222222",
-      companyName: "Demo Manufacturing LLC",
-      country: "US",
-      currency: "USD",
-      metadata: {
-        source: "seed",
-      },
-    },
-    create: {
-      connectionId: quickBooksConnection.id,
-      realmId: "9130357992222222",
-      companyName: "Demo Manufacturing LLC",
-      country: "US",
-      currency: "USD",
-      metadata: {
-        source: "seed",
-      },
+      OR: [
+        {
+          connectionId: quickBooksConnection.id,
+        },
+        {
+          realmId: "9130357992222222",
+        },
+      ],
     },
   });
+
+  const company = existingCompany
+    ? await prisma.quickBooksCompany.update({
+        where: {
+          id: existingCompany.id,
+        },
+        data: {
+          connectionId: quickBooksConnection.id,
+          realmId: "9130357992222222",
+          companyName: "Demo Manufacturing LLC",
+          country: "US",
+          currency: "USD",
+          metadata: {
+            source: "seed",
+          },
+        },
+      })
+    : await prisma.quickBooksCompany.create({
+        data: {
+          connectionId: quickBooksConnection.id,
+          realmId: "9130357992222222",
+          companyName: "Demo Manufacturing LLC",
+          country: "US",
+          currency: "USD",
+          metadata: {
+            source: "seed",
+          },
+        },
+      });
 
   const invoices = [
     {
@@ -236,6 +265,200 @@ async function seedDemoData(userId: string) {
       },
     });
   }
+
+  const seededInvoice = await prisma.importedInvoice.findUniqueOrThrow({
+    where: {
+      connectionId_providerInvoiceId: {
+        connectionId: quickBooksConnection.id,
+        providerInvoiceId: "9003",
+      },
+    },
+  });
+
+  const capitalSource = await prisma.capitalSource.upsert({
+    where: {
+      key: "arena-stafi-managed-pool",
+    },
+    update: {
+      name: "Protofire Arena StaFi Managed Pool",
+      marketplaceNode: MarketplaceNode.PANDADOC,
+      type: CapitalSourceType.ARENA_STAFI_MANAGED_POOL,
+      network: "Arena StaFi",
+      currency: "USDC",
+      operatorWallet: "0xProtofireOperatorWalletDemo",
+      liquiditySnapshot: "500000.00",
+      metadata: {
+        seeded: true,
+      },
+    },
+    create: {
+      key: "arena-stafi-managed-pool",
+      name: "Protofire Arena StaFi Managed Pool",
+      marketplaceNode: MarketplaceNode.PANDADOC,
+      type: CapitalSourceType.ARENA_STAFI_MANAGED_POOL,
+      network: "Arena StaFi",
+      currency: "USDC",
+      operatorWallet: "0xProtofireOperatorWalletDemo",
+      liquiditySnapshot: "500000.00",
+      metadata: {
+        seeded: true,
+      },
+    },
+  });
+
+  const factoringOffer = await prisma.factoringOffer.upsert({
+    where: {
+      importedInvoiceId: seededInvoice.id,
+    },
+    update: {
+      capitalSourceId: capitalSource.id,
+      marketplaceNode: MarketplaceNode.PANDADOC,
+      accountingSystem: AccountingSystem.QUICKBOOKS,
+      eligibilityStatus: FactoringEligibilityStatus.INELIGIBLE,
+      ineligibilityReason:
+        "An active factoring transaction already exists for this invoice.",
+      grossAmount: "600.00",
+      discountRateBps: 325,
+      discountAmount: "19.50",
+      netProceeds: "580.50",
+      settlementCurrency: "USDC",
+      settlementTimeSummary:
+        "USDC wallet: Within minutes / ACH: Same business day / Debit card: Within 30 minutes",
+      termsSnapshot: {
+        seeded: true,
+        invoiceId: seededInvoice.providerInvoiceId,
+      },
+      generatedAt: new Date("2026-03-01T12:00:00.000Z"),
+    },
+    create: {
+      userId,
+      importedInvoiceId: seededInvoice.id,
+      capitalSourceId: capitalSource.id,
+      marketplaceNode: MarketplaceNode.PANDADOC,
+      accountingSystem: AccountingSystem.QUICKBOOKS,
+      eligibilityStatus: FactoringEligibilityStatus.INELIGIBLE,
+      ineligibilityReason:
+        "An active factoring transaction already exists for this invoice.",
+      grossAmount: "600.00",
+      discountRateBps: 325,
+      discountAmount: "19.50",
+      netProceeds: "580.50",
+      settlementCurrency: "USDC",
+      settlementTimeSummary:
+        "USDC wallet: Within minutes / ACH: Same business day / Debit card: Within 30 minutes",
+      termsSnapshot: {
+        seeded: true,
+        invoiceId: seededInvoice.providerInvoiceId,
+      },
+      generatedAt: new Date("2026-03-01T12:00:00.000Z"),
+    },
+  });
+
+  const seededTransaction = await prisma.factoringTransaction.upsert({
+    where: {
+      transactionReference: "FACT-DEMO-9003",
+    },
+    update: {
+      userId,
+      importedInvoiceId: seededInvoice.id,
+      factoringOfferId: factoringOffer.id,
+      capitalSourceId: capitalSource.id,
+      marketplaceNode: MarketplaceNode.PANDADOC,
+      accountingSystem: AccountingSystem.QUICKBOOKS,
+      status: FactoringTransactionStatus.FUNDED,
+      settlementMethod: SettlementMethod.USDC_WALLET,
+      settlementDestinationMasked: "Wallet 0x1234...cafe",
+      sellerWalletAddress: "0x1234567890abcdefcafe",
+      invoiceCurrency: "USD",
+      settlementCurrency: "USDC",
+      grossAmount: "600.00",
+      discountRateBps: 325,
+      discountAmount: "19.50",
+      netProceeds: "580.50",
+      settlementTimeLabel: "Within minutes",
+      termsAcceptedAt: new Date("2026-03-01T12:15:00.000Z"),
+      fundedAt: new Date("2026-03-01T12:20:00.000Z"),
+      repaidAt: null,
+      operatorWallet: "0xProtofireOperatorWalletDemo",
+      arenaSettlementReference: "arena_sim_seeded_9003",
+      onChainExecutionStatus: OnChainExecutionStatus.SETTLED,
+      metadata: {
+        seeded: true,
+      },
+    },
+    create: {
+      transactionReference: "FACT-DEMO-9003",
+      userId,
+      importedInvoiceId: seededInvoice.id,
+      factoringOfferId: factoringOffer.id,
+      capitalSourceId: capitalSource.id,
+      marketplaceNode: MarketplaceNode.PANDADOC,
+      accountingSystem: AccountingSystem.QUICKBOOKS,
+      status: FactoringTransactionStatus.FUNDED,
+      settlementMethod: SettlementMethod.USDC_WALLET,
+      settlementDestinationMasked: "Wallet 0x1234...cafe",
+      sellerWalletAddress: "0x1234567890abcdefcafe",
+      invoiceCurrency: "USD",
+      settlementCurrency: "USDC",
+      grossAmount: "600.00",
+      discountRateBps: 325,
+      discountAmount: "19.50",
+      netProceeds: "580.50",
+      settlementTimeLabel: "Within minutes",
+      termsAcceptedAt: new Date("2026-03-01T12:15:00.000Z"),
+      fundedAt: new Date("2026-03-01T12:20:00.000Z"),
+      operatorWallet: "0xProtofireOperatorWalletDemo",
+      arenaSettlementReference: "arena_sim_seeded_9003",
+      onChainExecutionStatus: OnChainExecutionStatus.SETTLED,
+      metadata: {
+        seeded: true,
+      },
+    },
+  });
+
+  await prisma.factoringEventLog.deleteMany({
+    where: {
+      factoringTransactionId: seededTransaction.id,
+    },
+  });
+
+  await prisma.factoringEventLog.createMany({
+    data: [
+      {
+        userId,
+        importedInvoiceId: seededInvoice.id,
+        factoringTransactionId: seededTransaction.id,
+        eventType: FactoringEventType.OFFER_GENERATED,
+        message: "Seeded terms generated for the partial-payment invoice.",
+        metadata: {
+          seeded: true,
+        },
+      },
+      {
+        userId,
+        importedInvoiceId: seededInvoice.id,
+        factoringTransactionId: seededTransaction.id,
+        eventType: FactoringEventType.TRANSACTION_CREATED,
+        statusTo: FactoringTransactionStatus.PENDING,
+        message: "Seeded factoring transaction created.",
+        metadata: {
+          seeded: true,
+        },
+      },
+      {
+        userId,
+        importedInvoiceId: seededInvoice.id,
+        factoringTransactionId: seededTransaction.id,
+        eventType: FactoringEventType.STATUS_CHANGED,
+        statusFrom: FactoringTransactionStatus.PENDING,
+        statusTo: FactoringTransactionStatus.FUNDED,
+        message: "Seeded transaction advanced to funded.",
+        metadata: {
+          seeded: true,
+        },
+      },
+    ],
+  });
 }
 
 async function main() {

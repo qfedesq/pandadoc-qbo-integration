@@ -19,9 +19,9 @@ const features = [
     icon: DatabaseZap,
   },
   {
-    title: "Webhook-ready architecture",
+    title: "Factoring-ready flow",
     description:
-      "PandaDoc webhook ingestion is in place so document state sync can be layered in without refactoring.",
+      "The dashboard now supports withdraw-capital actions, settlement-method selection, and transaction lifecycle tracking.",
     icon: Workflow,
   },
 ];
@@ -38,10 +38,10 @@ export default function HomePage() {
                 PandaDoc ↔ QuickBooks Online
               </span>
               <h1 className="max-w-4xl font-[var(--font-heading)] text-5xl font-semibold tracking-tight text-balance text-white md:text-6xl">
-                Turn QuickBooks receivables into a Protofire-branded factoring command center.
+                Turn QuickBooks receivables into a Protofire-branded factoring marketplace node.
               </h1>
               <p className="max-w-3xl text-lg text-slate-300">
-                A production-minded workspace for secure OAuth, outstanding invoice normalization, PandaDoc document import, and scheduled sync across the full factoring loop.
+                A production-minded workspace for secure OAuth, outstanding invoice normalization, withdraw-capital flows, and Arena StaFi-ready settlement tracking across the full factoring loop.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -64,10 +64,10 @@ export default function HomePage() {
                   Current milestone
                 </p>
                 <h2 className="mt-3 font-[var(--font-heading)] text-2xl font-semibold text-white">
-                  Connect. Import. Normalize. Re-sync. Send.
+                  Connect. Import. Withdraw. Track. Repay.
                 </h2>
                 <p className="mt-2 text-sm text-slate-300">
-                  The model already supports invoice-to-document links, webhook updates, and future payment propagation back into the factoring workflow.
+                  The model supports invoice-to-document links, managed-pool factoring transactions, audit trails, and a clean path toward Arena StaFi execution.
                 </p>
               </div>
               <div className="grid gap-3">

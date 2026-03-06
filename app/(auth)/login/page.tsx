@@ -49,7 +49,7 @@ export default async function LoginPage({ searchParams }: Props) {
                 Invoice sync
               </div>
               <div className="rounded-[1.25rem] border border-white/12 bg-white/6 p-4">
-                PandaDoc import
+                Withdraw capital
               </div>
             </div>
           </CardContent>

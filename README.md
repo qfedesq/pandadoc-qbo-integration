@@ -6,7 +6,7 @@
 ![Playwright Smoke Tested](https://img.shields.io/badge/Playwright-smoke--tested-45BA63)
 ![Demo Ready](https://img.shields.io/badge/Status-demo--ready-0F766E)
 
-Protofire-branded factoring workspace for connecting PandaDoc and QuickBooks Online, importing outstanding QuickBooks invoices, and preparing future cross-system workflows.
+Protofire-branded embedded invoice factoring module for PandaDoc. The app connects PandaDoc and QuickBooks Online, imports outstanding invoices, exposes a factoring dashboard, and simulates Arena StaFi-ready settlement flows with audit trails and transaction tracking.
 
 Current release:
 
@@ -22,6 +22,9 @@ This repository demonstrates a complete Protofire-styled PandaDoc + QuickBooks O
 - connect QuickBooks Online with OAuth 2.0
 - import outstanding QuickBooks invoices into an internal normalized model
 - review them in a dedicated PandaDoc Factoring Dashboard
+- click `Withdraw Capital` on eligible invoices
+- review factoring terms, select a settlement method, and accept the transaction
+- track the factoring lifecycle through `pending`, `funded`, and `repaid`
 - push a selected invoice into PandaDoc as a document created from template
 - keep PandaDoc document state updated through webhooks
 
@@ -36,6 +39,8 @@ Primary demo actions:
 - use the guided setup panel inside `/factoring-dashboard` to authorize PandaDoc and QuickBooks from one place
 - sync invoices from QuickBooks
 - filter and inspect imported invoices
+- withdraw capital from an eligible invoice using `USDC wallet`, `ACH`, or `debit card`
+- review the transaction detail page and audit trail
 - click `Import to PandaDoc` for an invoice with payer email
 
 ## Dashboard preview
@@ -82,7 +87,9 @@ For a reviewer or stakeholder demo, the shortest path is:
 3. Open `/factoring-dashboard`
 4. Click `Sync now` to refresh outstanding invoices from QuickBooks
 5. Filter by status, search by invoice id or counterparty, and inspect last sync timestamps
-6. Import an invoice to PandaDoc from the dashboard and verify the PandaDoc document status badge updates after webhook delivery
+6. Click `Withdraw Capital` on an eligible invoice, confirm the terms, and land on the transaction detail page
+7. Use the demo operator controls to move the transaction from `pending` to `funded` to `repaid`
+8. Import an invoice to PandaDoc from the dashboard and verify the PandaDoc document status badge updates after webhook delivery
 
 ## Architecture overview
 
@@ -94,6 +101,8 @@ For a reviewer or stakeholder demo, the shortest path is:
 - `lib/providers/pandadoc/`: PandaDoc OAuth, current-member lookup, token refresh, and webhook support.
 - `lib/providers/quickbooks/`: QuickBooks OAuth, company lookup, token refresh, and invoice query adapter.
 - `lib/invoices/`: normalization, mapping, and sync orchestration.
+- `lib/factoring/`: factoring eligibility, offer generation, settlement-method options, and transaction orchestration.
+- `lib/arena-stafi/`: Arena StaFi-ready settlement gateway boundary with a managed-pool mock for Tier 1.
 - `lib/jobs/`: queue abstraction. The default implementation is inline, but the interface is ready for a real queue.
 - `lib/webhooks/`: PandaDoc webhook validation and persistence.
 - `lib/security/`: request-origin validation, encrypted secret handling, hashing, and database-backed rate limiting.
@@ -112,6 +121,11 @@ For a reviewer or stakeholder demo, the shortest path is:
 - Refreshes provider access tokens before API calls when needed.
 - Imports QuickBooks invoices into a normalized internal model.
 - Exposes a dedicated PandaDoc Factoring Dashboard at `/factoring-dashboard`.
+- Marks invoices as eligible or ineligible for the Tier 1 managed pool.
+- Generates factoring terms snapshots with discount rate, net proceeds, and settlement timing.
+- Supports `Withdraw Capital` confirmation with settlement method selection for `USDC wallet`, `ACH`, and `debit card`.
+- Creates factoring transactions with audit logs and tracks them through `PENDING`, `FUNDED`, and `REPAID`.
+- Simulates Arena StaFi settlement preparation through a dedicated service boundary and a managed liquidity pool abstraction.
 - Imports an individual QuickBooks invoice into PandaDoc from the dashboard using a PandaDoc template.
 - Links imported invoices with PandaDoc document ids and keeps document state updated from webhooks.
 - Filters invoices by status, overdue only, or search text.
@@ -205,6 +219,13 @@ Required for the live app:
 - `DEFAULT_ADMIN_PASSWORD`
 - `INVOICE_SYNC_ENABLED`
 - `INVOICE_SYNC_INTERVAL_MINUTES`
+- `FACTORING_BASE_DISCOUNT_BPS`
+- `FACTORING_PARTIAL_PAYMENT_DISCOUNT_BPS`
+- `FACTORING_MIN_NET_PROCEEDS`
+- `ARENA_STAFI_POOL_NAME`
+- `ARENA_STAFI_NETWORK`
+- `ARENA_STAFI_OPERATOR_WALLET`
+- `ARENA_STAFI_LIQUIDITY_SNAPSHOT`
 
 Google sign-in:
 
@@ -364,6 +385,52 @@ Design notes:
 - User-triggered sync always forces an immediate refresh for the selected connection.
 - The route returns the effective `dueOnly` mode and interval so cron orchestration can be observed easily.
 
+## Factoring module behavior
+
+Eligibility rules in the Tier 1 MVP:
+
+- only outstanding invoices with positive balance
+- due date required
+- `OPEN` and `PARTIALLY_PAID` invoices are eligible
+- `OVERDUE` invoices are intentionally excluded from the managed pool
+- invoices with an active factoring transaction (`PENDING` or `FUNDED`) are not re-factored
+
+Withdraw-capital flow:
+
+1. User clicks `Withdraw Capital` on an eligible invoice
+2. The app generates or refreshes a `FactoringOffer`
+3. The terms page displays:
+   - discount rate
+   - net proceeds
+   - settlement time options
+   - managed capital source details
+4. User selects a settlement method:
+   - `USDC wallet`
+   - `ACH`
+   - `debit card`
+5. User accepts the terms and submits
+6. The app creates a `FactoringTransaction`, stores an audit trail in `FactoringEventLog`, and prepares a mocked Arena StaFi settlement reference
+7. The transaction detail page tracks status changes from `PENDING` to `FUNDED` to `REPAID`
+
+Tier 1 terms model:
+
+- discount rate is generated server-side from invoice status and due-date proximity
+- net proceeds are calculated from outstanding balance minus the discount
+- settlement timing varies by method:
+  - `USDC wallet`: within minutes
+  - `ACH`: same business day
+  - `debit card`: within 30 minutes
+
+## Arena StaFi readiness
+
+Tier 1 does not deploy live on-chain settlement, but the repository is prepared for it:
+
+- `CapitalSource` models the managed liquidity pool
+- `FactoringTransaction` stores settlement method, operator wallet, and Arena settlement reference
+- `FactoringEventLog` captures the transaction audit trail
+- `lib/arena-stafi/gateway.ts` is the service boundary where real escrow / disbursement / repayment execution can replace the current mock
+- the current mock explicitly records simulated on-chain preparation through `onChainExecutionStatus`
+
 Vercel Cron:
 
 - This repository includes [vercel.json](/Users/qfedesq/Desktop/PandaDoc/vercel.json) with a built-in hourly cron:
@@ -498,6 +565,8 @@ The Playwright suite expects the database to be migrated and seeded first.
 
 - `DocumentInvoiceLink` is already in the schema to link PandaDoc documents with imported invoices.
 - QuickBooks invoices are normalized into a stable internal record so PandaDoc document generation can be layered on later.
+- `MarketplaceNode`, `AccountingSystem`, `CapitalSource`, `FactoringOffer`, `FactoringTransaction`, and `FactoringEventLog` prepare the domain for additional SaaS nodes and capital sources.
+- The new factoring services isolate eligibility, terms generation, capital-source lookup, and Arena StaFi execution boundaries so future nodes like FreshBooks, Wave, or Zoho Invoice can be added without route-handler rewrites.
 - Sync runs and metric counters provide an audit trail for adding retries, dead-letter queues, and alerting.
 - PandaDoc webhook events are stored even before full downstream business processing exists.
 - The provider adapters are isolated so future features like “push payment state back into PandaDoc” or richer PandaDoc Payments orchestration can be added without route-handler rewrites.

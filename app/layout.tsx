@@ -20,7 +20,7 @@ const bodyFont = IBM_Plex_Sans({
 export const metadata: Metadata = {
   title: `Protofire Factoring Dashboard ${APP_DISPLAY_VERSION}`,
   description:
-    "Protofire-branded PandaDoc and QuickBooks factoring workspace with invoice sync, document import, and scheduled refresh.",
+    "Protofire-branded PandaDoc and QuickBooks factoring workspace with invoice sync, withdraw-capital flows, Arena StaFi-ready settlement simulation, and scheduled refresh.",
 };
 
 export default function RootLayout({

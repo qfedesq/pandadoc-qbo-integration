@@ -35,6 +35,23 @@ const envSchema = z.object({
     )
     .default(true),
   INVOICE_SYNC_INTERVAL_MINUTES: z.coerce.number().int().positive().default(60),
+  FACTORING_BASE_DISCOUNT_BPS: z.coerce.number().int().positive().default(450),
+  FACTORING_PARTIAL_PAYMENT_DISCOUNT_BPS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(325),
+  FACTORING_MIN_NET_PROCEEDS: z.coerce.number().positive().default(250),
+  ARENA_STAFI_POOL_NAME: z
+    .string()
+    .min(1)
+    .default("Protofire Arena StaFi Managed Pool"),
+  ARENA_STAFI_NETWORK: z.string().min(1).default("Arena StaFi"),
+  ARENA_STAFI_OPERATOR_WALLET: z
+    .string()
+    .min(1)
+    .default("0xProtofireOperatorWalletDemo"),
+  ARENA_STAFI_LIQUIDITY_SNAPSHOT: z.coerce.number().positive().default(500000),
   TOKEN_ENCRYPTION_KEY: z
     .string()
     .regex(/^[0-9a-fA-F]{64}$/)

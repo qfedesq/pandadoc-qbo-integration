@@ -47,6 +47,51 @@ enum AuthIdentityProvider {
   GOOGLE
 }
 
+enum MarketplaceNode {
+  PANDADOC
+}
+
+enum AccountingSystem {
+  QUICKBOOKS
+}
+
+enum FactoringEligibilityStatus {
+  ELIGIBLE
+  INELIGIBLE
+}
+
+enum SettlementMethod {
+  USDC_WALLET
+  ACH
+  DEBIT_CARD
+}
+
+enum FactoringTransactionStatus {
+  PENDING
+  FUNDED
+  REPAID
+  CANCELLED
+}
+
+enum CapitalSourceType {
+  ARENA_STAFI_MANAGED_POOL
+}
+
+enum OnChainExecutionStatus {
+  NOT_STARTED
+  SIMULATED
+  SETTLED
+}
+
+enum FactoringEventType {
+  OFFER_GENERATED
+  TERMS_ACCEPTED
+  TRANSACTION_CREATED
+  ARENA_SETTLEMENT_PREPARED
+  STATUS_CHANGED
+  REPAYMENT_RECORDED
+}
+
 model User {
   id             String                  @id @default(cuid())
   email          String                  @unique
@@ -62,6 +107,9 @@ model User {
   webhookEvents  WebhookEventLog[]
   syncRuns       SyncRun[]
   documentLinks  DocumentInvoiceLink[]
+  factoringOffers FactoringOffer[]
+  factoringTransactions FactoringTransaction[]
+  factoringEvents FactoringEventLog[]
 }
 
 model AppSession {
@@ -206,6 +254,9 @@ model ImportedInvoice {
   connection         IntegrationConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
   quickBooksCompany  QuickBooksCompany? @relation(fields: [quickBooksCompanyId], references: [id], onDelete: SetNull)
   documentLinks      DocumentInvoiceLink[]
+  factoringOffer     FactoringOffer?
+  factoringTransactions FactoringTransaction[]
+  factoringEvents    FactoringEventLog[]
 
   @@unique([connectionId, providerInvoiceId])
   @@index([userId, normalizedStatus])
@@ -303,4 +354,109 @@ model DocumentInvoiceLink {
 
   @@unique([userId, pandadocDocumentId])
   @@unique([userId, importedInvoiceId])
+}
+
+model CapitalSource {
+  id                String           @id @default(cuid())
+  key               String           @unique
+  name              String
+  marketplaceNode   MarketplaceNode
+  type              CapitalSourceType
+  network           String
+  currency          String
+  operatorWallet    String?
+  liquiditySnapshot Decimal?         @db.Decimal(18, 2)
+  isActive          Boolean          @default(true)
+  metadata          Json?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  offers            FactoringOffer[]
+  transactions      FactoringTransaction[]
+
+  @@index([marketplaceNode, type, isActive])
+}
+
+model FactoringOffer {
+  id                   String                     @id @default(cuid())
+  userId               String
+  importedInvoiceId    String                     @unique
+  capitalSourceId      String
+  marketplaceNode      MarketplaceNode
+  accountingSystem     AccountingSystem
+  eligibilityStatus    FactoringEligibilityStatus
+  ineligibilityReason  String?
+  grossAmount          Decimal                    @db.Decimal(18, 2)
+  discountRateBps      Int
+  discountAmount       Decimal                    @db.Decimal(18, 2)
+  netProceeds          Decimal                    @db.Decimal(18, 2)
+  settlementCurrency   String
+  settlementTimeSummary String
+  termsSnapshot        Json
+  generatedAt          DateTime                   @default(now())
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+  user                 User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  importedInvoice      ImportedInvoice            @relation(fields: [importedInvoiceId], references: [id], onDelete: Cascade)
+  capitalSource        CapitalSource              @relation(fields: [capitalSourceId], references: [id], onDelete: Restrict)
+  transactions         FactoringTransaction[]
+
+  @@index([userId, eligibilityStatus])
+}
+
+model FactoringTransaction {
+  id                         String                     @id @default(cuid())
+  transactionReference       String                     @unique
+  userId                     String
+  importedInvoiceId          String
+  factoringOfferId           String?
+  capitalSourceId            String
+  marketplaceNode            MarketplaceNode
+  accountingSystem           AccountingSystem
+  status                     FactoringTransactionStatus @default(PENDING)
+  settlementMethod           SettlementMethod
+  settlementDestinationMasked String
+  sellerWalletAddress        String?
+  invoiceCurrency            String?
+  settlementCurrency         String
+  grossAmount                Decimal                    @db.Decimal(18, 2)
+  discountRateBps            Int
+  discountAmount             Decimal                    @db.Decimal(18, 2)
+  netProceeds                Decimal                    @db.Decimal(18, 2)
+  settlementTimeLabel        String
+  termsAcceptedAt            DateTime
+  fundedAt                   DateTime?
+  repaidAt                   DateTime?
+  operatorWallet             String?
+  arenaSettlementReference   String?
+  onChainExecutionStatus     OnChainExecutionStatus     @default(NOT_STARTED)
+  metadata                   Json?
+  createdAt                  DateTime                   @default(now())
+  updatedAt                  DateTime                   @updatedAt
+  user                       User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  importedInvoice            ImportedInvoice            @relation(fields: [importedInvoiceId], references: [id], onDelete: Cascade)
+  factoringOffer             FactoringOffer?            @relation(fields: [factoringOfferId], references: [id], onDelete: SetNull)
+  capitalSource              CapitalSource              @relation(fields: [capitalSourceId], references: [id], onDelete: Restrict)
+  events                     FactoringEventLog[]
+
+  @@index([userId, status, createdAt])
+  @@index([importedInvoiceId, status])
+}
+
+model FactoringEventLog {
+  id                    String                     @id @default(cuid())
+  userId                String
+  importedInvoiceId     String
+  factoringTransactionId String?
+  eventType             FactoringEventType
+  statusFrom            FactoringTransactionStatus?
+  statusTo              FactoringTransactionStatus?
+  message               String
+  metadata              Json?
+  createdAt             DateTime                   @default(now())
+  user                  User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  importedInvoice       ImportedInvoice            @relation(fields: [importedInvoiceId], references: [id], onDelete: Cascade)
+  factoringTransaction  FactoringTransaction?      @relation(fields: [factoringTransactionId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([factoringTransactionId, createdAt])
 }

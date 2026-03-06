@@ -8,13 +8,23 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatCurrency(amount: number | string, currency = "USD") {
   const numeric = typeof amount === "number" ? amount : Number(amount);
+  const safeAmount = Number.isFinite(numeric) ? numeric : 0;
+  const normalizedCurrency = currency.toUpperCase();
 
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
+  if (/^[A-Z]{3}$/.test(normalizedCurrency)) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: normalizedCurrency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(safeAmount);
+  }
+
+  return `${new Intl.NumberFormat("en-US", {
+    style: "decimal",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(Number.isFinite(numeric) ? numeric : 0);
+  }).format(safeAmount)} ${normalizedCurrency}`;
 }
 
 export function formatDate(date: Date | string | null | undefined) {

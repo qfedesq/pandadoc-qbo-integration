@@ -1,18 +1,25 @@
-import { InvoiceStatus, Provider } from "@prisma/client";
+import { FactoringTransactionStatus, InvoiceStatus, Provider } from "@prisma/client";
 import Link from "next/link";
 
 import { FactoringConnectionCard } from "@/components/factoring-connection-card";
 import { InvoiceFilters } from "@/components/invoice-filters";
 import { FactoringSetupGuide } from "@/components/factoring-setup-guide";
 import { InvoiceTable } from "@/components/invoice-table";
+import { RecentFactoringTransactions } from "@/components/recent-factoring-transactions";
 import { SyncButton } from "@/components/sync-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth/require-user";
-import { listInvoicesWithDocumentLinksForUser } from "@/lib/db/document-links";
+import {
+  countFactoringTransactionsByStatus,
+  getOrCreateManagedCapitalSource,
+  listFactoringInvoicesForUser,
+  listRecentFactoringTransactionsForUser,
+} from "@/lib/db/factoring";
 import { findUserConnection } from "@/lib/db/integrations";
 import { getLatestSyncRun } from "@/lib/db/invoices";
 import { hasPandaDocImportConfig } from "@/lib/env";
+import { evaluateFactoringEligibility } from "@/lib/factoring/eligibility";
 import {
   getInvoiceSyncConfiguration,
   getNextInvoiceSyncAt,
@@ -44,12 +51,24 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
     findUserConnection(user.id, Provider.PANDADOC),
     findUserConnection(user.id, Provider.QUICKBOOKS),
   ]);
-  const invoices = await listInvoicesWithDocumentLinksForUser({
-    userId: user.id,
-    search: query.q,
-    status: isInvoiceStatus(query.status) ? query.status : "ALL",
-    overdueOnly: query.overdue === "true",
-  });
+  const [invoices, recentTransactions, activeTransactionsCount, capitalSource] =
+    await Promise.all([
+      listFactoringInvoicesForUser({
+        userId: user.id,
+        search: query.q,
+        status: isInvoiceStatus(query.status) ? query.status : "ALL",
+        overdueOnly: query.overdue === "true",
+      }),
+      listRecentFactoringTransactionsForUser(user.id, 6),
+      countFactoringTransactionsByStatus({
+        userId: user.id,
+        statuses: [
+          FactoringTransactionStatus.PENDING,
+          FactoringTransactionStatus.FUNDED,
+        ],
+      }),
+      getOrCreateManagedCapitalSource(),
+    ]);
   const latestSync = quickBooksConnection
     ? await getLatestSyncRun(quickBooksConnection.id)
     : null;
@@ -63,6 +82,14 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
     quickBooksConnection && quickBooksConnected
       ? getNextInvoiceSyncAt(quickBooksConnection.lastSyncAt)
       : null;
+  const eligibleInvoicesCount = invoices.filter((invoice) =>
+    evaluateFactoringEligibility({
+      balanceAmount: invoice.balanceAmount,
+      dueDate: invoice.dueDate,
+      normalizedStatus: invoice.normalizedStatus,
+      transactions: invoice.factoringTransactions,
+    }).eligible,
+  ).length;
 
   return (
     <div className="space-y-6">
@@ -75,7 +102,9 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
             PandaDoc Factoring Dashboard
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Imported QuickBooks outstanding invoices are normalized here for PandaDoc-side factoring and future document workflows.
+            Embedded invoice factoring for PandaDoc. Connect QuickBooks, import
+            outstanding receivables, withdraw capital from the managed Arena
+            StaFi-ready pool, and track each transaction from pending to repaid.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -125,6 +154,54 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
           providerConfigured={quickBooksConfigured}
           configurationMessage={getProviderOauthConfigurationMessage(Provider.QUICKBOOKS)}
         />
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card className="border-border/70 shadow-panel">
+          <CardHeader>
+            <CardTitle>Eligible invoices</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <div className="text-4xl font-semibold text-foreground">
+              {eligibleInvoicesCount}
+            </div>
+            <p>
+              Open or partially paid invoices with positive balance and a valid due
+              date can enter the Tier 1 managed pool.
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="border-border/70 shadow-panel">
+          <CardHeader>
+            <CardTitle>Active transactions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <div className="text-4xl font-semibold text-foreground">
+              {activeTransactionsCount}
+            </div>
+            <p>
+              Pending and funded transactions remain visible until repayment is
+              recorded and the invoice exits the pool.
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="border-border/70 shadow-panel">
+          <CardHeader>
+            <CardTitle>Capital source</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <div className="text-lg font-semibold text-foreground">
+              {capitalSource.name}
+            </div>
+            <p>
+              {capitalSource.network} · {capitalSource.currency} · Managed pool
+            </p>
+            <p>
+              Liquidity snapshot: {capitalSource.liquiditySnapshot?.toString() ?? "0"}{" "}
+              {capitalSource.currency}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="border-border/70 shadow-panel">
@@ -190,6 +267,8 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
         pandaDocConnected={pandaDocConnected}
         pandaDocImportEnabled={pandaDocImportEnabled}
       />
+
+      <RecentFactoringTransactions transactions={recentTransactions} />
     </div>
   );
 }

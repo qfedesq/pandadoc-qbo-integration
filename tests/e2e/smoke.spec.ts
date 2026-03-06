@@ -18,5 +18,18 @@ test("dashboard smoke flow", async ({ page }) => {
   await expect(page.getByText("Demo Manufacturing LLC", { exact: true })).toBeVisible();
   await expect(page.getByRole("table")).toBeVisible();
   await expect(page.getByText("Acme Holdings")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Import to PandaDoc" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Withdraw Capital" }).first()).toBeVisible();
+
+  const invoiceRow = page.getByRole("row").filter({ hasText: "Acme Holdings" });
+  await invoiceRow.getByRole("link", { name: "Withdraw Capital" }).click();
+
+  await expect(page).toHaveURL(/\/factoring-dashboard\/invoices\/.+\/withdraw$/);
+  await expect(page.getByRole("heading", { name: /Invoice 9001/ })).toBeVisible();
+  await page.getByLabel("Wallet address").fill("0x1234567890abcdefabcd");
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Confirm withdrawal" }).click();
+
+  await expect(page).toHaveURL(/\/factoring-dashboard\/transactions\/.+$/);
+  await expect(page.getByRole("heading", { name: /FACT-/ })).toBeVisible();
+  await expect(page.getByText("Audit trail")).toBeVisible();
 });
