@@ -1,4 +1,4 @@
-# pandadoc-qbo-integration v1.9
+# pandadoc-qbo-integration v1.10
 
 Repository baseline: `pandadoc-qbo-integration v1.3`
 
