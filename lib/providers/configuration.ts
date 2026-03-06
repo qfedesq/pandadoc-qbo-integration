@@ -3,12 +3,13 @@ import { Provider } from "@prisma/client";
 import {
   hasPandaDocOauthConfig,
   hasQuickBooksOauthConfig,
+  isPandaDocMockMode,
   isQuickBooksMockMode,
 } from "@/lib/env";
 
 export function isProviderOauthConfigured(provider: Provider) {
   if (provider === Provider.PANDADOC) {
-    return hasPandaDocOauthConfig();
+    return isPandaDocMockMode() || hasPandaDocOauthConfig();
   }
 
   return isQuickBooksMockMode() || hasQuickBooksOauthConfig();
@@ -16,6 +17,10 @@ export function isProviderOauthConfigured(provider: Provider) {
 
 export function getProviderOauthConfigurationMessage(provider: Provider) {
   if (provider === Provider.PANDADOC) {
+    if (isPandaDocMockMode()) {
+      return "PandaDoc is running in mock mode. Connect the demo workspace to create sample documents and prove the embedded workflow without external credentials.";
+    }
+
     return "PandaDoc sign-in will be available after this deployment has valid PANDADOC_CLIENT_ID and PANDADOC_CLIENT_SECRET values.";
   }
 

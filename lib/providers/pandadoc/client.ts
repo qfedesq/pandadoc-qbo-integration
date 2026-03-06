@@ -1,4 +1,4 @@
-import { env } from "@/lib/env";
+import { env, isPandaDocMockMode } from "@/lib/env";
 import { AppError } from "@/lib/utils/errors";
 import { getHttpErrorDetails, getOutboundRequestSignal } from "@/lib/utils/http";
 
@@ -9,6 +9,11 @@ import {
   type PandaDocDocumentRecipient,
   type PandaDocDocumentToken,
 } from "./schemas";
+import {
+  createMockPandaDocDocument,
+  getMockPandaDocDocumentDetails,
+  getMockPandaDocMember,
+} from "./mock";
 
 async function pandaDocApiFetch(
   accessToken: string,
@@ -41,6 +46,10 @@ async function pandaDocApiFetch(
 }
 
 export async function fetchPandaDocCurrentMember(accessToken: string) {
+  if (isPandaDocMockMode()) {
+    return getMockPandaDocMember();
+  }
+
   const response = await pandaDocApiFetch(accessToken, "/public/v1/members/current");
   const payload = await response.json();
 
@@ -55,6 +64,15 @@ export async function createPandaDocDocumentFromTemplate(input: {
   tokens: PandaDocDocumentToken[];
   metadata?: Record<string, string>;
 }) {
+  if (isPandaDocMockMode()) {
+    return createMockPandaDocDocument({
+      name: input.name,
+      recipients: input.recipients,
+      tokens: input.tokens,
+      metadata: input.metadata,
+    });
+  }
+
   const response = await pandaDocApiFetch(
     input.accessToken,
     "/public/v1/documents",
@@ -80,6 +98,10 @@ export async function fetchPandaDocDocumentDetails(
   accessToken: string,
   documentId: string,
 ) {
+  if (isPandaDocMockMode()) {
+    return getMockPandaDocDocumentDetails({ documentId });
+  }
+
   const response = await pandaDocApiFetch(
     accessToken,
     `/public/v1/documents/${documentId}`,
@@ -95,6 +117,16 @@ export async function sendPandaDocDocument(input: {
   message: string;
   silent?: boolean;
 }) {
+  if (isPandaDocMockMode()) {
+    return {
+      ok: true,
+      payload: {
+        id: input.documentId,
+        status: "document.sent",
+      },
+    };
+  }
+
   const response = await pandaDocApiFetch(
     input.accessToken,
     `/public/v1/documents/${input.documentId}/send`,

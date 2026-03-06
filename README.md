@@ -177,15 +177,31 @@ npm run dev
 The app runs fully out of the box with:
 
 ```env
+PANDADOC_MODE=mock
 QUICKBOOKS_MODE=mock
 SEED_DEMO_DATA=true
 ```
 
 In mock mode:
 
+- PandaDoc connect creates a demo workspace and document import uses a mock adapter
 - QuickBooks connect creates a demo company instead of redirecting to Intuit
 - invoice sync reads realistic payloads from `mock-data/quickbooks/outstanding-invoices-response.json`
 - the full seller -> pool -> operator flow works without external credentials
+
+## Switching to real PandaDoc later
+
+1. Set `PANDADOC_MODE=oauth`
+2. Provide:
+   - `PANDADOC_CLIENT_ID`
+   - `PANDADOC_CLIENT_SECRET`
+   - `PANDADOC_REDIRECT_URI`
+   - `PANDADOC_SCOPES`
+   - `PANDADOC_AUTH_URL`
+   - `PANDADOC_TOKEN_URL`
+   - `PANDADOC_API_BASE_URL`
+   - `PANDADOC_TEMPLATE_UUID`
+3. Reconnect PandaDoc from `/integrations`
 
 ## Switching to real QuickBooks later
 
@@ -212,6 +228,7 @@ Required for local demo:
 - `DEFAULT_ADMIN_PASSWORD`
 - `TOKEN_ENCRYPTION_KEY`
 - `SEED_DEMO_DATA`
+- `PANDADOC_MODE`
 - `QUICKBOOKS_MODE`
 - `ARENA_STAFI_POOL_NAME`
 - `ARENA_STAFI_NETWORK`
@@ -233,22 +250,24 @@ Optional for extended demo:
 
 1. Sign in at `/login`
 2. Open `/integrations`
-3. Click `Connect demo company` for QuickBooks
-4. Open `/factoring-dashboard`
-5. Click `Sync now`
-6. Review eligible invoices
-7. Click `Withdraw Capital` on an eligible invoice
-8. Accept terms and fund the invoice
-9. Open `/transactions` to verify the funded position
-10. Open `/capital-pool` to inspect deployed capital and pool balances
-11. Open `/operator` and simulate repayment for a funded invoice
-12. Return to `/capital-pool` and `/transactions` to confirm yield and fee booking
+3. Click `Connect` for the PandaDoc demo workspace
+4. Click `Connect demo company` for QuickBooks
+5. Open `/factoring-dashboard`
+6. Click `Sync now`
+7. Review eligible invoices
+8. Click `Withdraw Capital` on an eligible invoice
+9. Accept terms and fund the invoice
+10. Open `/transactions` to verify the funded position
+11. Open `/capital-pool` to inspect deployed capital and pool balances
+12. Open `/operator` and simulate repayment for a funded invoice
+13. Return to `/capital-pool` and `/transactions` to confirm yield and fee booking
 
 ## API surface
 
 Main routes:
 
 - `POST /api/auth/login`
+- `POST /api/oauth/pandadoc/connect`
 - `POST /api/oauth/quickbooks/connect`
 - `POST /api/invoices/sync`
 - `POST /api/factoring/transactions`
@@ -258,6 +277,8 @@ Main routes:
 
 Route intent:
 
+- `/api/oauth/pandadoc/connect`
+  Connects either the PandaDoc mock adapter or the real OAuth flow
 - `/api/oauth/quickbooks/connect`
   Connects either the mock adapter or the real OAuth flow
 - `/api/invoices/sync`
@@ -291,7 +312,7 @@ npm run test:e2e
 
 - One managed liquidity pool powers the demo
 - Demo auth is sufficient for local validation
-- PandaDoc remains optional for the factoring loop, but the integration boundary is preserved
+- PandaDoc can run in mock or OAuth mode without changing the factoring workflow
 - Stablecoin settlement is simulated through the internal wallet ledger
 
 ## Known limitations
@@ -304,7 +325,7 @@ npm run test:e2e
 
 ## Production hardening next steps
 
-1. Replace mock QuickBooks mode with tenant-safe live OAuth onboarding
+1. Replace mock PandaDoc and QuickBooks modes with tenant-safe live OAuth onboarding
 2. Add multi-tenant RBAC for seller, provider, and operator personas
 3. Reconcile pool accounting against a real treasury / wallet system
 4. Add webhooks or scheduled jobs for invoice payment detection

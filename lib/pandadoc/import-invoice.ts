@@ -9,7 +9,7 @@ import {
 } from "@/lib/db/document-links";
 import { findUserConnection } from "@/lib/db/integrations";
 import { getImportedInvoiceForUser } from "@/lib/db/invoices";
-import { env, hasPandaDocImportConfig } from "@/lib/env";
+import { env, hasPandaDocImportConfig, isPandaDocMockMode } from "@/lib/env";
 import { logger } from "@/lib/logging/logger";
 import {
   createPandaDocDocumentFromTemplate,
@@ -103,6 +103,10 @@ async function refreshExistingDocumentLink(
     pandadocConnectionId: string;
   },
 ) {
+  if (isPandaDocMockMode()) {
+    return input.link;
+  }
+
   if (input.link.pandadocDocumentId.startsWith("pending:")) {
     return input.link;
   }
