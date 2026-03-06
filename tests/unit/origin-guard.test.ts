@@ -35,4 +35,22 @@ describe("assertValidAppRequestOrigin", () => {
       "Request origin validation failed.",
     );
   });
+
+  it("accepts same-origin Vercel preview requests using the request URL", () => {
+    const request = new Request(
+      "https://pandadoc-qbo-integration-git-main-qfedesq.vercel.app/api/invoices/sync",
+      {
+        method: "POST",
+        headers: {
+          origin:
+            "https://pandadoc-qbo-integration-git-main-qfedesq.vercel.app",
+          "x-forwarded-host":
+            "pandadoc-qbo-integration-git-main-qfedesq.vercel.app",
+          "x-forwarded-proto": "https",
+        },
+      },
+    );
+
+    expect(() => assertValidAppRequestOrigin(request)).not.toThrow();
+  });
 });

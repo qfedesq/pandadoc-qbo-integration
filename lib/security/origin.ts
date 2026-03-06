@@ -1,8 +1,25 @@
 import { env } from "@/lib/env";
 import { AppError } from "@/lib/utils/errors";
 
-function getExpectedOrigin() {
-  return new URL(env.APP_BASE_URL).origin;
+function getExpectedOrigins(request: Request) {
+  const origins = new Set<string>();
+
+  origins.add(new URL(env.APP_BASE_URL).origin);
+
+  try {
+    origins.add(new URL(request.url).origin);
+  } catch {
+    // Ignore malformed request URLs and fall back to APP_BASE_URL only.
+  }
+
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const forwardedHost = request.headers.get("x-forwarded-host");
+
+  if (forwardedProto && forwardedHost) {
+    origins.add(`${forwardedProto}://${forwardedHost}`);
+  }
+
+  return [...origins];
 }
 
 function isLoopbackHostname(hostname: string) {
@@ -40,7 +57,7 @@ export function assertValidAppRequestOrigin(request: Request) {
   }
 
   let sourceUrl: URL;
-  const expectedUrl = new URL(getExpectedOrigin());
+  const expectedOrigins = getExpectedOrigins(request);
 
   try {
     sourceUrl = new URL(source);
@@ -52,7 +69,11 @@ export function assertValidAppRequestOrigin(request: Request) {
     );
   }
 
-  if (!isEquivalentOrigin(sourceUrl, expectedUrl)) {
+  const originMatches = expectedOrigins.some((expectedOrigin) =>
+    isEquivalentOrigin(sourceUrl, new URL(expectedOrigin)),
+  );
+
+  if (!originMatches) {
     throw new AppError(
       "Request origin validation failed.",
       403,
