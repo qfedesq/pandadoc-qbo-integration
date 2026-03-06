@@ -1,4 +1,4 @@
-# pandadoc-qbo-integration v1.2
+# pandadoc-qbo-integration v1.3
 
 ![Next.js 15](https://img.shields.io/badge/Next.js-15-black)
 ![TypeScript Strict](https://img.shields.io/badge/TypeScript-strict-3178C6)
@@ -10,8 +10,8 @@ Protofire-branded embedded invoice factoring module for PandaDoc. The app connec
 
 Current release:
 
-- `V1.2`
-- repository target name: `pandadoc-qbo-integration-v1-2`
+- `V1.3`
+- repository target name: `pandadoc-qbo-integration-v1-3`
 
 ## Demo summary
 
