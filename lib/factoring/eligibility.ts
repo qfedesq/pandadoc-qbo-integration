@@ -52,7 +52,7 @@ export function evaluateFactoringEligibility(
     return {
       eligible: false,
       status: FactoringEligibilityStatus.INELIGIBLE,
-      reason: "An active factoring transaction already exists for this invoice.",
+      reason: "An active capital advance already exists for this invoice.",
       activeTransactionStatus,
     };
   }
@@ -61,7 +61,7 @@ export function evaluateFactoringEligibility(
     return {
       eligible: false,
       status: FactoringEligibilityStatus.INELIGIBLE,
-      reason: "Only outstanding invoices with a positive balance can be factored.",
+      reason: "Only outstanding invoices with a positive balance can receive funding.",
       activeTransactionStatus: null,
     };
   }
@@ -70,7 +70,7 @@ export function evaluateFactoringEligibility(
     return {
       eligible: false,
       status: FactoringEligibilityStatus.INELIGIBLE,
-      reason: "A due date is required before the invoice can enter the factoring pool.",
+      reason: "A due date is required before the invoice can be reviewed for funding.",
       activeTransactionStatus: null,
     };
   }
@@ -79,7 +79,7 @@ export function evaluateFactoringEligibility(
     return {
       eligible: false,
       status: FactoringEligibilityStatus.INELIGIBLE,
-      reason: "Overdue invoices are not eligible for the Tier 1 managed pool.",
+      reason: "Overdue invoices are not eligible for this funding program.",
       activeTransactionStatus: null,
     };
   }

@@ -22,7 +22,7 @@ describe("evaluateFactoringEligibility", () => {
     });
   });
 
-  it("rejects overdue invoices for the Tier 1 pool", () => {
+  it("rejects overdue invoices for the funding program", () => {
     expect(
       evaluateFactoringEligibility({
         balanceAmount: "980.00",
@@ -33,7 +33,7 @@ describe("evaluateFactoringEligibility", () => {
     ).toMatchObject({
       eligible: false,
       status: "INELIGIBLE",
-      reason: "Overdue invoices are not eligible for the Tier 1 managed pool.",
+      reason: "Overdue invoices are not eligible for this funding program.",
     });
   });
 
@@ -64,7 +64,7 @@ describe("evaluateFactoringEligibility", () => {
       eligible: false,
       status: "INELIGIBLE",
       reason:
-        "A due date is required before the invoice can enter the factoring pool.",
+        "A due date is required before the invoice can be reviewed for funding.",
     });
   });
 });

@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { isQuickBooksMockMode } from "@/lib/env";
+import { getQuickBooksConnectionDisplayName } from "@/lib/providers/quickbooks/mock";
 import { formatDateTime } from "@/lib/utils";
 
 type Props = {
@@ -36,6 +37,10 @@ export function FactoringConnectionCard({
   configurationMessage,
 }: Props) {
   const isConnected = connection?.status === "CONNECTED";
+  const accountName =
+    provider === Provider.QUICKBOOKS
+      ? getQuickBooksConnectionDisplayName(connection)
+      : connection?.externalAccountName ?? null;
   const connectHref =
     provider === Provider.PANDADOC
       ? "/api/oauth/pandadoc/connect"
@@ -58,7 +63,7 @@ export function FactoringConnectionCard({
             Account
           </p>
           <p className="mt-1 font-medium text-foreground">
-            {connection?.externalAccountName ?? "Not connected"}
+            {accountName ?? "Not connected"}
           </p>
         </div>
         <div>

@@ -4,6 +4,8 @@ import { SyncButton } from "@/components/sync-button";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { isQuickBooksMockMode } from "@/lib/env";
+import { getQuickBooksConnectionDisplayName } from "@/lib/providers/quickbooks/mock";
 
 function ProviderConnectAction({
   provider,
@@ -21,12 +23,18 @@ function ProviderConnectAction({
       ? "/api/oauth/pandadoc/connect"
       : "/api/oauth/quickbooks/connect";
   const label =
-    provider === Provider.PANDADOC ? "PandaDoc" : "QuickBooks Online";
+    provider === Provider.PANDADOC
+      ? "workspace"
+      : isQuickBooksMockMode()
+        ? "demo company"
+        : "company";
+  const providerLabel =
+    provider === Provider.PANDADOC ? "PandaDoc" : "QuickBooks";
 
   if (!configured) {
     return (
       <Button type="button" variant="outline" disabled>
-        {label} credentials pending
+        {providerLabel} credentials pending
       </Button>
     );
   }
@@ -92,6 +100,7 @@ export function FactoringSetupGuide({
 }) {
   const pandaDocConnected = pandaDocConnection?.status === "CONNECTED";
   const quickBooksConnected = quickBooksConnection?.status === "CONNECTED";
+  const quickBooksAccountName = getQuickBooksConnectionDisplayName(quickBooksConnection);
   const bridgeReady = pandaDocConnected && quickBooksConnected;
   const redirectTo = "/factoring-dashboard";
 
@@ -148,7 +157,7 @@ export function FactoringSetupGuide({
             status={quickBooksConnected ? "CONNECTED" : "DISCONNECTED"}
             detail={
               quickBooksConnected
-                ? `Connected as ${quickBooksConnection?.externalAccountName ?? "QuickBooks company"}.`
+                ? `Connected as ${quickBooksAccountName ?? "QuickBooks company"}.`
                 : providerMessages.quickBooks
             }
             action={

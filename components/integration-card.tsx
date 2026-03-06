@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { isQuickBooksMockMode } from "@/lib/env";
+import { getQuickBooksConnectionDisplayName } from "@/lib/providers/quickbooks/mock";
 import { formatDate } from "@/lib/utils";
 
 type Connection = IntegrationConnection & {
@@ -32,6 +33,10 @@ export function IntegrationCard({
   configurationMessage: string;
 }) {
   const isConnected = connection?.status === "CONNECTED";
+  const accountName =
+    provider === "QUICKBOOKS"
+      ? getQuickBooksConnectionDisplayName(connection)
+      : connection?.externalAccountName ?? null;
   const connectHref =
     provider === "PANDADOC"
       ? "/api/oauth/pandadoc/connect"
@@ -56,7 +61,7 @@ export function IntegrationCard({
         <p>
           Account:{" "}
           <span className="font-medium text-foreground">
-            {connection?.externalAccountName ?? "Not connected"}
+            {accountName ?? "Not connected"}
           </span>
         </p>
         {provider === "QUICKBOOKS" ? (

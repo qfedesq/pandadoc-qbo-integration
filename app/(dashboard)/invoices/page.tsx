@@ -12,6 +12,7 @@ import { findUserConnection } from "@/lib/db/integrations";
 import { hasPandaDocImportConfig } from "@/lib/env";
 import { evaluateFactoringEligibility } from "@/lib/factoring/eligibility";
 import { getProviderOauthConfigurationMessage } from "@/lib/providers/configuration";
+import { getQuickBooksConnectionDisplayName } from "@/lib/providers/quickbooks/mock";
 import { formatDateTime } from "@/lib/utils";
 
 type SearchParams = {
@@ -41,6 +42,7 @@ export default async function InvoicesPage({ searchParams }: Props) {
     status: isInvoiceStatus(query.status) ? query.status : "ALL",
     overdueOnly: query.overdue === "true",
   });
+  const quickBooksAccountName = getQuickBooksConnectionDisplayName(quickBooksConnection);
 
   const eligibleCount = invoices.filter((invoice) =>
     evaluateFactoringEligibility({
@@ -88,7 +90,7 @@ export default async function InvoicesPage({ searchParams }: Props) {
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
             <div className="text-lg font-semibold text-foreground">
-              {quickBooksConnection?.externalAccountName ?? "Not connected"}
+              {quickBooksAccountName ?? "Not connected"}
             </div>
             <p>Last sync: {formatDateTime(quickBooksConnection?.lastSyncAt)}</p>
           </CardContent>
