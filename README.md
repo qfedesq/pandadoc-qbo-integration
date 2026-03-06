@@ -1,4 +1,4 @@
-# pandadoc-qbo-integration v1.0
+# pandadoc-qbo-integration v1.1
 
 ![Next.js 15](https://img.shields.io/badge/Next.js-15-black)
 ![TypeScript Strict](https://img.shields.io/badge/TypeScript-strict-3178C6)
@@ -10,8 +10,8 @@ Protofire-branded factoring workspace for connecting PandaDoc and QuickBooks Onl
 
 Current release:
 
-- `V1.0`
-- repository target name: `pandadoc-qbo-integration-v1-0`
+- `V1.1`
+- repository target name: `pandadoc-qbo-integration-v1-1`
 
 ## Demo summary
 
@@ -146,7 +146,7 @@ Source of truth:
 
 Current behavior:
 
-- this repo starts at `1.0.0`, displayed as `V1.0`
+- this repo is currently at `1.1.0`, displayed as `V1.1`
 - every new push to `main` triggers `.github/workflows/bump-app-version.yml`
 - that workflow bumps the minor version automatically (`1.0.0` -> `1.1.0`)
 - the follow-up commit is pushed back with `[skip version bump]` to prevent loops
