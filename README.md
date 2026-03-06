@@ -1,5 +1,7 @@
 # PandaDoc Embedded Invoice Factoring MVP
 
+Repository baseline: `pandadoc-qbo-integration v1.3`
+
 Protofire-branded MVP for an embedded invoice factoring product inside a PandaDoc workflow. The app connects a seller workspace to QuickBooks, imports invoices, generates factoring terms, funds eligible invoices from a managed liquidity pool, credits a demo USDC wallet, simulates repayment, and records yield plus operator fees with an auditable ledger.
 
 ## What this MVP proves
