@@ -12,6 +12,7 @@ Production-ready foundation for connecting PandaDoc and QuickBooks Online, impor
 
 This repository demonstrates a complete PandaDoc + QuickBooks Online integration workflow:
 
+- sign in with Google using a verified Gmail account
 - connect PandaDoc with OAuth 2.0
 - connect QuickBooks Online with OAuth 2.0
 - import outstanding QuickBooks invoices into an internal normalized model
@@ -25,6 +26,7 @@ Primary demo route:
 
 Primary demo actions:
 
+- sign in with Google or the seeded admin credentials
 - connect both integrations in `/integrations`
 - sync invoices from QuickBooks
 - filter and inspect imported invoices
@@ -49,6 +51,8 @@ Default local demo sign-in from `.env.example`:
 - Email: `admin@example.com`
 - Password: `ChangeMe123!`
 
+If Google OAuth is configured with real credentials, the login page also shows `Continue with Google` and automatically provisions a local account for any verified Gmail user.
+
 These credentials are for local seeded development only. Production credentials, OAuth secrets, token encryption keys, and sync secrets must be provided through your real environment configuration and must never be committed.
 
 ## Demo flow
@@ -67,6 +71,7 @@ For a reviewer or stakeholder demo, the shortest path is:
 - `app/`: Next.js 15 App Router UI and HTTP route handlers.
 - `components/`: dashboard UI, filters, tables, and shadcn-style primitives.
 - `lib/auth/`: internal app authentication with a database-backed session cookie.
+- `lib/providers/google/`: Google OAuth login and Gmail-based access control.
 - `lib/db/`: Prisma client plus persistence helpers for connections, sync runs, and imported invoices.
 - `lib/providers/pandadoc/`: PandaDoc OAuth, current-member lookup, token refresh, and webhook support.
 - `lib/providers/quickbooks/`: QuickBooks OAuth, company lookup, token refresh, and invoice query adapter.
@@ -81,6 +86,7 @@ For a reviewer or stakeholder demo, the shortest path is:
 ## What the app does today
 
 - Authenticates a local admin user to protect the dashboard and server routes.
+- Supports Google sign-in for verified Gmail accounts and provisions local users automatically.
 - Connects PandaDoc with OAuth 2.0 and persists tokens server-side.
 - Connects QuickBooks Online with OAuth 2.0, persists tokens, and stores the QuickBooks realm/company.
 - Refreshes provider access tokens before API calls when needed.
@@ -163,6 +169,17 @@ Required for the live app:
 - `INVOICE_SYNC_ENABLED`
 - `INVOICE_SYNC_INTERVAL_MINUTES`
 
+Google sign-in:
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REDIRECT_URI`
+- `GOOGLE_SCOPES`
+- `GOOGLE_AUTH_URL`
+- `GOOGLE_TOKEN_URL`
+- `GOOGLE_USERINFO_URL`
+- `GOOGLE_ALLOWED_EMAIL_DOMAINS`
+
 PandaDoc OAuth:
 
 - `PANDADOC_CLIENT_ID`
@@ -193,6 +210,32 @@ Vercel deployment note:
 
 - `CRON_SECRET` should be set in Vercel if you use the built-in Vercel Cron entrypoint at `/api/cron/invoices-sync`
 - `INTERNAL_SYNC_SECRET` should be set if you also want to trigger `POST /api/invoices/sync` from another internal scheduler or worker
+
+## Google sign-in configuration
+
+The app supports Google OAuth sign-in and provisions a local user automatically after a successful callback.
+
+Current access rule:
+
+- only verified Google accounts whose email domain is in `GOOGLE_ALLOWED_EMAIL_DOMAINS`
+- the default allowed domains are `gmail.com,googlemail.com`
+
+Register this callback in your Google OAuth client:
+
+- Local: `http://localhost:3000/api/auth/google/callback`
+- Production: `https://your-domain/api/auth/google/callback`
+
+Flow:
+
+1. User clicks `Continue with Google` on `/login`
+2. The app creates a short-lived login state in `AuthLoginState`
+3. Google redirects back to `/api/auth/google/callback`
+4. The app validates state, exchanges the authorization code, fetches Google user info, verifies the email, checks the allowed domain list, and upserts `UserIdentity`
+5. The app creates its normal server-side session cookie and redirects to the factoring dashboard
+
+This implementation follows Google's OpenID Connect authorization-code flow and userinfo guidance:
+
+- [Google OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect)
 
 ## PandaDoc OAuth configuration
 
@@ -307,8 +350,8 @@ Vercel Cron:
 Vercel deployment checklist:
 
 1. Import the GitHub repo into Vercel
-2. Set all production environment variables, especially `APP_BASE_URL`, `DATABASE_URL`, `TOKEN_ENCRYPTION_KEY`, `CRON_SECRET`, `INTERNAL_SYNC_SECRET`, PandaDoc OAuth values, and QuickBooks OAuth values
-3. Point PandaDoc and QuickBooks redirect URIs at the production domain
+2. Set all production environment variables, especially `APP_BASE_URL`, `DATABASE_URL`, `TOKEN_ENCRYPTION_KEY`, `CRON_SECRET`, `INTERNAL_SYNC_SECRET`, Google OAuth values, PandaDoc OAuth values, and QuickBooks OAuth values
+3. Point Google, PandaDoc, and QuickBooks redirect URIs at the production domain
 4. Run `prisma migrate deploy` against the production database
 5. Redeploy the project after env var changes
 6. Confirm `GET /api/cron/invoices-sync` is listed in the Vercel Cron settings and protected by `CRON_SECRET`

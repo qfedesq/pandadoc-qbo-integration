@@ -43,6 +43,10 @@ enum SyncDirection {
   BIDIRECTIONAL
 }
 
+enum AuthIdentityProvider {
+  GOOGLE
+}
+
 model User {
   id             String                  @id @default(cuid())
   email          String                  @unique
@@ -52,6 +56,7 @@ model User {
   updatedAt      DateTime                @updatedAt
   sessions       AppSession[]
   oauthStates    OAuthState[]
+  authIdentities UserIdentity[]
   connections    IntegrationConnection[]
   invoices       ImportedInvoice[]
   webhookEvents  WebhookEventLog[]
@@ -87,6 +92,35 @@ model OAuthState {
 
   @@index([userId, provider])
   @@index([expiresAt])
+}
+
+model AuthLoginState {
+  id         String               @id @default(cuid())
+  provider   AuthIdentityProvider
+  state      String               @unique
+  redirectTo String?
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime             @default(now())
+
+  @@index([provider, expiresAt])
+}
+
+model UserIdentity {
+  id             String               @id @default(cuid())
+  userId         String
+  provider       AuthIdentityProvider
+  providerUserId String
+  email          String?
+  displayName    String?
+  avatarUrl      String?
+  profile        Json?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId, provider])
 }
 
 model IntegrationConnection {

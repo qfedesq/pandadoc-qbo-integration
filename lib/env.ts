@@ -8,6 +8,7 @@ const defaultTokenKey =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 const defaultCronSecret = "replace-with-a-long-random-string";
 const defaultAdminPassword = "ChangeMe123!";
+const placeholderValuePattern = /^(replace-me-|placeholder)/i;
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -40,6 +41,28 @@ const envSchema = z.object({
     .default(defaultTokenKey),
   INTERNAL_SYNC_SECRET: z.string().min(16).optional(),
   CRON_SECRET: z.string().min(16).default(defaultCronSecret),
+  GOOGLE_CLIENT_ID: z.string().optional().default(""),
+  GOOGLE_CLIENT_SECRET: z.string().optional().default(""),
+  GOOGLE_REDIRECT_URI: z
+    .string()
+    .url()
+    .default("http://localhost:3000/api/auth/google/callback"),
+  GOOGLE_SCOPES: z.string().default("openid email profile"),
+  GOOGLE_AUTH_URL: z
+    .string()
+    .url()
+    .default("https://accounts.google.com/o/oauth2/v2/auth"),
+  GOOGLE_TOKEN_URL: z
+    .string()
+    .url()
+    .default("https://oauth2.googleapis.com/token"),
+  GOOGLE_USERINFO_URL: z
+    .string()
+    .url()
+    .default("https://openidconnect.googleapis.com/v1/userinfo"),
+  GOOGLE_ALLOWED_EMAIL_DOMAINS: z
+    .string()
+    .default("gmail.com,googlemail.com"),
   PANDADOC_CLIENT_ID: z.string().optional().default(""),
   PANDADOC_CLIENT_SECRET: z.string().optional().default(""),
   PANDADOC_REDIRECT_URI: z
@@ -94,18 +117,43 @@ export const env = {
   INTERNAL_SYNC_SECRET: parsedEnv.INTERNAL_SYNC_SECRET ?? parsedEnv.CRON_SECRET,
 };
 
+function isConfiguredValue(value?: string | null) {
+  return Boolean(value && !placeholderValuePattern.test(value.trim()));
+}
+
 export const isProduction = env.NODE_ENV === "production";
 
+export function hasGoogleOauthConfig() {
+  return Boolean(
+    isConfiguredValue(env.GOOGLE_CLIENT_ID) &&
+      isConfiguredValue(env.GOOGLE_CLIENT_SECRET),
+  );
+}
+
+export function getGoogleAllowedEmailDomains() {
+  return env.GOOGLE_ALLOWED_EMAIL_DOMAINS.split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 export function hasPandaDocOauthConfig() {
-  return Boolean(env.PANDADOC_CLIENT_ID && env.PANDADOC_CLIENT_SECRET);
+  return Boolean(
+    isConfiguredValue(env.PANDADOC_CLIENT_ID) &&
+      isConfiguredValue(env.PANDADOC_CLIENT_SECRET),
+  );
 }
 
 export function hasPandaDocImportConfig() {
-  return Boolean(hasPandaDocOauthConfig() && env.PANDADOC_TEMPLATE_UUID);
+  return Boolean(
+    hasPandaDocOauthConfig() && isConfiguredValue(env.PANDADOC_TEMPLATE_UUID),
+  );
 }
 
 export function hasQuickBooksOauthConfig() {
-  return Boolean(env.QUICKBOOKS_CLIENT_ID && env.QUICKBOOKS_CLIENT_SECRET);
+  return Boolean(
+    isConfiguredValue(env.QUICKBOOKS_CLIENT_ID) &&
+      isConfiguredValue(env.QUICKBOOKS_CLIENT_SECRET),
+  );
 }
 
 export function assertSecureTokenEncryptionConfiguration() {

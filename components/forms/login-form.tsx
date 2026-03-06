@@ -3,12 +3,13 @@
 import { useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { Chrome } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function LoginForm() {
+export function LoginForm({ googleEnabled = false }: { googleEnabled?: boolean }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -45,37 +46,55 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          placeholder="admin@example.com"
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          placeholder="••••••••"
-          required
-        />
-      </div>
-      {error ? (
-        <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
-        </p>
+    <div className="space-y-4">
+      {googleEnabled ? (
+        <>
+          <form action="/api/auth/google/connect" method="post">
+            <Button className="w-full" type="submit" variant="outline">
+              <Chrome className="h-4 w-4" />
+              Continue with Google
+            </Button>
+          </form>
+          <div className="flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            <span>Or use email and password</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </>
       ) : null}
-      <Button className="w-full" disabled={isPending} type="submit">
-        {isPending ? "Signing in..." : "Sign in"}
-      </Button>
-    </form>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            placeholder="admin@example.com"
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+        {error ? (
+          <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            {error}
+          </p>
+        ) : null}
+        <Button className="w-full" disabled={isPending} type="submit">
+          {isPending ? "Signing in..." : "Sign in"}
+        </Button>
+      </form>
+    </div>
   );
 }
