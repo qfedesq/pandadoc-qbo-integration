@@ -63,7 +63,7 @@ export function FactoringTransactionForm({
         const responseBody = (await response.json().catch(() => null)) as
           | { error?: string }
           | null;
-        setError(responseBody?.error ?? "Unable to create the factoring transaction.");
+        setError(responseBody?.error ?? "Unable to create the capital advance.");
         return;
       }
 
@@ -76,7 +76,7 @@ export function FactoringTransactionForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="settlementMethod">Settlement method</Label>
+        <Label htmlFor="settlementMethod">Receive funds</Label>
         <Select
           id="settlementMethod"
           name="settlementMethod"
@@ -148,8 +148,8 @@ export function FactoringTransactionForm({
         />
         <span className="text-muted-foreground">
           I accept the advance rate, fees, repayment amount, and settlement timing
-          shown above. Funding will reserve pool liquidity and credit my demo
-          wallet immediately in this MVP.
+          shown above. Funding will reserve available capital and credit the
+          selected demo destination immediately in this MVP.
         </span>
       </label>
 
@@ -160,7 +160,7 @@ export function FactoringTransactionForm({
       ) : null}
 
       <Button disabled={isPending || !acceptTerms} type="submit">
-        {isPending ? "Funding..." : "Accept terms and fund invoice"}
+        {isPending ? "Funding..." : "Accept terms and withdraw capital"}
       </Button>
     </form>
   );

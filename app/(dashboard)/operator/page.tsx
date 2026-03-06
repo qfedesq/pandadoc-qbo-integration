@@ -55,7 +55,7 @@ export default async function OperatorPage() {
             Admin and repayment controls
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Simulate repayment, inspect audit history, and confirm that protocol
+            Simulate repayment, inspect audit history, and confirm that platform
             fees are accruing correctly for the marketplace operator.
           </p>
         </div>
@@ -90,7 +90,7 @@ export default async function OperatorPage() {
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Pool protocol fees</CardTitle>
+            <CardTitle>Platform fees collected</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-semibold text-foreground">

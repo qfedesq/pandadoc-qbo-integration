@@ -38,19 +38,19 @@ export default async function FactoringTransactionPage({ params }: Props) {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Factoring transaction
+            Capital advance
           </p>
           <h1 className="font-[var(--font-heading)] text-4xl font-semibold tracking-tight">
             {transaction.transactionReference}
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Track settlement and repayment for the invoice as it moves through the
-            Tier 1 managed pool.
+            Track funding and repayment for this invoice as it moves through the
+            PandaDoc working-capital flow.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="outline">
-            <Link href="/factoring-dashboard">Back to dashboard</Link>
+            <Link href="/factoring-dashboard">Back to seller dashboard</Link>
           </Button>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default async function FactoringTransactionPage({ params }: Props) {
             <StatusBadge status={transaction.status} />
             <div>
               <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
-                On-chain execution
+                Settlement processing
               </span>
               <span className="mt-2 block">
                 <StatusBadge status={transaction.onChainExecutionStatus} />
@@ -126,7 +126,7 @@ export default async function FactoringTransactionPage({ params }: Props) {
               </span>
             </p>
             <p>
-              Protocol fee:{" "}
+              Platform fee:{" "}
               <span className="font-medium text-foreground">
                 {formatCurrency(
                   transaction.operatorFeeAmount.toString(),
@@ -157,18 +157,22 @@ export default async function FactoringTransactionPage({ params }: Props) {
 
         <Card className="border-border/70 shadow-panel xl:col-span-1">
           <CardHeader>
-            <CardTitle>Capital source</CardTitle>
+            <CardTitle>Funding summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">{transaction.capitalSource.name}</p>
-            <p>{transaction.capitalSource.network}</p>
+            <p className="font-medium text-foreground">Managed capital provider pool</p>
+            <p>Risk tier: {transaction.riskTier}</p>
             <p>
-              Operator wallet: {transaction.operatorWallet ?? "Not available"}
+              Funding capacity snapshot:{" "}
+              {formatCurrency(
+                (transaction.capitalSource.liquiditySnapshot ?? 0).toString(),
+                transaction.settlementCurrency,
+              )}
             </p>
             <p>
               Settlement ref: {transaction.arenaSettlementReference ?? "Not issued"}
             </p>
-            <p>Risk tier: {transaction.riskTier}</p>
+            <p>Platform fee booked on repayment and tracked in the ledger.</p>
           </CardContent>
         </Card>
       </div>
@@ -232,12 +236,12 @@ export default async function FactoringTransactionPage({ params }: Props) {
 
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Demo operator actions</CardTitle>
+            <CardTitle>Demo controls</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-muted-foreground">
             <p>
-              Tier 1 uses simulated Arena StaFi execution. Use the demo controls
-              below to advance the transaction lifecycle for review purposes.
+              Use the demo controls below to simulate funding and repayment during
+              the presentation.
             </p>
             <FactoringTransactionActions
               transactionId={transaction.id}

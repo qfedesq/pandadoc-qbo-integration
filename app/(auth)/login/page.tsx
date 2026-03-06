@@ -34,16 +34,18 @@ export default async function LoginPage({ searchParams }: Props) {
                   Secure access
                 </p>
                 <h1 className="font-[var(--font-heading)] text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                  Bring factoring operations into one branded command surface.
+                  Turn invoice workflows into working capital inside PandaDoc.
                 </h1>
                 <p className="max-w-xl text-sm text-slate-300">
-                  Use a verified Gmail account through Google sign-in, or fall back to the local password-based admin credentials when they are enabled for the environment.
+                  Sign in to connect PandaDoc and QuickBooks, import invoices, and
+                  walk through the seller, capital provider, and operator flows in
+                  one demo workspace.
                 </p>
               </div>
             </div>
             <div className="grid gap-3 text-sm text-slate-300 md:grid-cols-3">
               <div className="rounded-[1.25rem] border border-white/12 bg-white/6 p-4">
-                Secure OAuth
+                Secure sign-in
               </div>
               <div className="rounded-[1.25rem] border border-white/12 bg-white/6 p-4">
                 Invoice sync
@@ -59,7 +61,7 @@ export default async function LoginPage({ searchParams }: Props) {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               Sign in
             </p>
-            <CardTitle>Access the integration dashboard</CardTitle>
+            <CardTitle>Access the working capital demo</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <NoticeBanner error={error} notice={notice} />

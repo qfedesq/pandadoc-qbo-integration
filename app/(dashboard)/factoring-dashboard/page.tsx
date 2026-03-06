@@ -61,6 +61,7 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
     invoices,
     recentTransactions,
     activeTransactionsCount,
+    repaidTransactionsCount,
     capitalSource,
     sellerWalletBalance,
   ] =
@@ -78,6 +79,10 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
           FactoringTransactionStatus.PENDING,
           FactoringTransactionStatus.FUNDED,
         ],
+      }),
+      countFactoringTransactionsByStatus({
+        userId: user.id,
+        statuses: [FactoringTransactionStatus.REPAID],
       }),
       getOrCreateManagedCapitalSource(),
       getWalletBalance({
@@ -113,20 +118,20 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            PandaDoc factoring
+            PandaDoc embedded finance
           </p>
           <h1 className="font-[var(--font-heading)] text-4xl font-semibold tracking-tight">
-            PandaDoc Factoring Dashboard
+            Working capital dashboard
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Embedded invoice factoring for PandaDoc. Connect QuickBooks, import
-            outstanding receivables, withdraw capital from the managed Arena
-            StaFi-ready pool, and track each transaction from pending to repaid.
+            Connect QuickBooks, import outstanding invoices, review eligible
+            receivables, and let finance teams withdraw capital directly inside
+            the PandaDoc workflow.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="outline">
-            <Link href="/integrations">Manage integrations</Link>
+            <Link href="/integrations">Manage connections</Link>
           </Button>
           <SyncButton
             disabled={!quickBooksConnected}
@@ -154,7 +159,7 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
         <FactoringConnectionCard
           provider={Provider.PANDADOC}
           label="PandaDoc account"
-          description="Workspace identity used for future document and webhook-driven factoring workflows."
+          description="Workspace where invoice approvals and capital actions stay inside the PandaDoc experience."
           connection={pandaDocConnection}
           metadataLabel="Workspace / account ID"
           metadataValue={pandaDocConnection?.externalAccountId ?? "—"}
@@ -164,7 +169,7 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
         <FactoringConnectionCard
           provider={Provider.QUICKBOOKS}
           label="QuickBooks company"
-          description="Source company for invoice import, outstanding balance checks, and payment-state refresh."
+          description="Accounting source of truth for unpaid invoices, balances, and due dates."
           connection={quickBooksConnection}
           metadataLabel="Realm ID"
           metadataValue={quickBooksConnection?.externalAccountId ?? "—"}
@@ -183,59 +188,60 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
               {eligibleInvoicesCount}
             </div>
             <p>
-              Open or partially paid invoices with positive balance and a valid due
-              date can enter the Tier 1 managed pool.
+              Open invoices above the minimum threshold and not already funded can
+              receive a capital offer.
             </p>
           </CardContent>
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Seller wallet</CardTitle>
+            <CardTitle>Capital received</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
             <div className="text-2xl font-semibold text-foreground">
               {formatCurrency(sellerWalletBalance.toString(), "USDC")}
             </div>
             <p>
-              Demo balance credited whenever capital is disbursed against an
-              invoice.
+              Demo wallet balance credited after successful capital withdrawals.
             </p>
           </CardContent>
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Active positions</CardTitle>
+            <CardTitle>Active advances</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
             <div className="text-4xl font-semibold text-foreground">
               {activeTransactionsCount}
             </div>
             <p>
-              Funded positions stay visible here until repayment is simulated or
-              the position defaults.
+              Invoices currently funded and waiting for repayment to complete.
             </p>
           </CardContent>
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Pool available</CardTitle>
+            <CardTitle>Funding capacity</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
             <div className="text-2xl font-semibold text-foreground">
               {formatCurrency(capitalSource.availableLiquidity.toString(), "USDC")}
             </div>
-            <p>Deployable liquidity remaining in the managed capital pool.</p>
+            <p>Capital currently available for new withdrawals in the demo.</p>
           </CardContent>
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Accrued yield</CardTitle>
+            <CardTitle>Completed repayments</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div className="text-2xl font-semibold text-foreground">
-              {formatCurrency(capitalSource.accruedYield.toString(), "USDC")}
+            <div className="text-4xl font-semibold text-foreground">
+              {repaidTransactionsCount}
             </div>
-            <p>Yield already realized by the pool across repaid positions.</p>
+            <p>
+              Funded invoices that have already settled back to the capital
+              provider.
+            </p>
           </CardContent>
         </Card>
       </div>

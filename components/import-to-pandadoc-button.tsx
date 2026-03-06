@@ -53,9 +53,9 @@ export function ImportToPandaDocButton({
         setMessage(
           payload.sendRequested
             ? payload.sendInitiated
-              ? "Document imported and sent via PandaDoc."
-              : "Document imported. PandaDoc will send it when the draft is ready."
-            : "Document imported into PandaDoc.",
+              ? "Invoice created and sent via PandaDoc."
+              : "Invoice created in PandaDoc. It will send once the draft is ready."
+            : "Invoice draft created in PandaDoc.",
         );
       } else {
         setMessage("This invoice is already linked to PandaDoc.");

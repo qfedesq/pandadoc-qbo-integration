@@ -57,8 +57,8 @@ export default async function CapitalPoolPage() {
             Capital pool dashboard
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Monitor deployed capital, realized yield, and protocol fees for the
-            managed liquidity pool that powers the invoice advances.
+            Monitor deployed capital, realized yield, and platform fees for the
+            managed liquidity pool that powers invoice advances.
           </p>
         </div>
         <Button asChild variant="outline">
@@ -109,7 +109,7 @@ export default async function CapitalPoolPage() {
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Protocol fees</CardTitle>
+            <CardTitle>Platform fees</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-semibold text-foreground">

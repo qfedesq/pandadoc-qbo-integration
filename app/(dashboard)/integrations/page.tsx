@@ -38,7 +38,9 @@ export default async function IntegrationsPage({ searchParams }: Props) {
           Connect PandaDoc and QuickBooks Online
         </h1>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          Each provider is isolated behind its own adapter and token lifecycle. QuickBooks sync can run manually from the UI or via the secured cron endpoint.
+          Connect PandaDoc and QuickBooks so finance teams can import invoices,
+          review eligible receivables, and access working capital without leaving
+          the workflow.
         </p>
       </div>
 
@@ -65,10 +67,13 @@ export default async function IntegrationsPage({ searchParams }: Props) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Webhook endpoint</CardTitle>
+          <CardTitle>PandaDoc webhook setup</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
-          <p>Configure PandaDoc webhooks to POST to `/api/webhooks/pandadoc`.</p>
+          <p>
+            Point PandaDoc webhooks to `/api/webhooks/pandadoc` so document
+            events stay linked to the working capital flow.
+          </p>
           <p>
             If `PANDADOC_WEBHOOK_SHARED_SECRET` is set, PandaDoc deliveries must include
             the HMAC-SHA256 signature for the raw request body through the configured

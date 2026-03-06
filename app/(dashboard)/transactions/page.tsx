@@ -40,14 +40,14 @@ export default async function TransactionsPage() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Seller workspace
+            Seller view
           </p>
           <h1 className="font-[var(--font-heading)] text-4xl font-semibold tracking-tight">
             Transaction history
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Monitor every factoring position from funding through repayment, with
-            the exact terms, timing, and wallet movements preserved.
+            Monitor every capital advance from withdrawal through repayment, with
+            the exact terms, timing, and settlement details preserved.
           </p>
         </div>
         <Button asChild variant="outline">
@@ -58,7 +58,7 @@ export default async function TransactionsPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Total positions</CardTitle>
+            <CardTitle>Total advances</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-semibold text-foreground">
@@ -68,7 +68,7 @@ export default async function TransactionsPage() {
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Active positions</CardTitle>
+            <CardTitle>Active advances</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-semibold text-foreground">{activeCount}</div>
@@ -76,7 +76,7 @@ export default async function TransactionsPage() {
         </Card>
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Total disbursed</CardTitle>
+            <CardTitle>Capital received</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-semibold text-foreground">
@@ -93,12 +93,12 @@ export default async function TransactionsPage() {
 
       <Card className="border-border/70 shadow-panel">
         <CardHeader>
-          <CardTitle>Factoring positions</CardTitle>
+          <CardTitle>Capital advances</CardTitle>
         </CardHeader>
         <CardContent>
           {transactions.length === 0 ? (
             <div className="rounded-[1.25rem] border border-dashed border-border p-6 text-sm text-muted-foreground">
-              No factoring positions exist yet.
+              No capital advances exist yet.
             </div>
           ) : (
             <div className="overflow-hidden rounded-[1.25rem] border border-border/70">

@@ -37,6 +37,9 @@ export default async function WithdrawCapitalPage({ params }: Props) {
   }
 
   const { invoice, capitalSource, calculated } = result;
+  const deliveryOptions = calculated.settlementOptions
+    .map((option) => option.label)
+    .join(" · ");
   const activeTransaction =
     invoice.factoringTransactions.find(
       (transaction) =>
@@ -48,18 +51,18 @@ export default async function WithdrawCapitalPage({ params }: Props) {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Withdraw capital
+            Review offer
           </p>
           <h1 className="font-[var(--font-heading)] text-4xl font-semibold tracking-tight">
             Invoice {invoice.providerInvoiceId}
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Review the indicative terms, choose a settlement method, and confirm
-            the Tier 1 factoring transaction.
+            Review the indicative offer, choose how funds will be delivered, and
+            confirm the capital withdrawal.
           </p>
         </div>
         <Button asChild variant="outline">
-          <Link href="/factoring-dashboard">Back to dashboard</Link>
+          <Link href="/factoring-dashboard">Back to seller dashboard</Link>
         </Button>
       </div>
 
@@ -106,21 +109,44 @@ export default async function WithdrawCapitalPage({ params }: Props) {
 
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Managed pool</CardTitle>
+            <CardTitle>Funding overview</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-muted-foreground">
-            <div className="text-lg font-semibold text-foreground">{capitalSource.name}</div>
-            <p>
-              Network: {capitalSource.network} · Settlement currency:{" "}
-              {capitalSource.currency}
-            </p>
-            <p>
-              Operator wallet: {capitalSource.operatorWallet ?? "Not configured"}
-            </p>
-            <p>
-              Liquidity snapshot: {capitalSource.liquiditySnapshot?.toString() ?? "0"}{" "}
-              {capitalSource.currency}
-            </p>
+          <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-2">
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
+                Funding source
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                Managed capital provider pool
+              </span>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
+                Available capacity
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                {formatCurrency(
+                  capitalSource.availableLiquidity.toString(),
+                  capitalSource.currency,
+                )}
+              </span>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
+                Settlement currency
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                {capitalSource.currency}
+              </span>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
+                Delivery options
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                {deliveryOptions}
+              </span>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -128,7 +154,7 @@ export default async function WithdrawCapitalPage({ params }: Props) {
       <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Indicative terms</CardTitle>
+            <CardTitle>Indicative offer</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="grid gap-4 md:grid-cols-3">
@@ -178,7 +204,7 @@ export default async function WithdrawCapitalPage({ params }: Props) {
               </div>
               <div className="rounded-[1.25rem] border border-border/70 bg-white/5 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  Protocol fee
+                  Platform fee
                 </p>
                 <p className="mt-2 text-lg font-semibold text-foreground">
                   {formatCurrency(calculated.operatorFeeAmount, calculated.settlementCurrency)}
@@ -250,17 +276,17 @@ export default async function WithdrawCapitalPage({ params }: Props) {
 
         <Card className="border-border/70 shadow-panel">
           <CardHeader>
-            <CardTitle>Confirm transaction</CardTitle>
+            <CardTitle>Accept terms</CardTitle>
           </CardHeader>
           <CardContent>
             {activeTransaction ? (
               <div className="space-y-4 text-sm text-muted-foreground">
                 <p>
-                  This invoice already has an active factoring position in the pool.
+                  This invoice already has an active capital advance.
                 </p>
                 <Button asChild>
                   <Link href={`/factoring-dashboard/transactions/${activeTransaction.id}`}>
-                    View transaction
+                    View advance
                   </Link>
                 </Button>
               </div>
@@ -291,8 +317,8 @@ export default async function WithdrawCapitalPage({ params }: Props) {
             <p key={note}>{note}</p>
           ))}
           <p>
-            Offer refreshed at {formatDateTime(result.offer.generatedAt)} from the demo
-            managed pool.
+            Offer refreshed at {formatDateTime(result.offer.generatedAt)} using
+            the current demo funding configuration.
           </p>
         </CardContent>
       </Card>

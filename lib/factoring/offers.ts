@@ -97,21 +97,21 @@ const settlementMethodDetails: Record<SettlementMethod, SettlementMethodOption> 
   USDC_WALLET: {
     method: SettlementMethod.USDC_WALLET,
     label: "USDC wallet",
-    description: "Receive settlement to the in-app demo wallet or any USDC-compatible address.",
+    description: "Receive funds in the in-app demo balance or any USDC-compatible address.",
     settlementTimeLabel: "Within minutes",
     helperText: "Provide the wallet address that should receive USDC for the demo flow.",
   },
   ACH: {
     method: SettlementMethod.ACH,
     label: "ACH",
-    description: "Use the operator-managed off-ramp for same-day ACH settlement.",
+    description: "Receive funds to a bank account in the demo ACH flow.",
     settlementTimeLabel: "Same business day",
     helperText: "Provide a bank account label or the last four digits for confirmation.",
   },
   DEBIT_CARD: {
     method: SettlementMethod.DEBIT_CARD,
     label: "Debit card",
-    description: "Route settlement to a card rail managed by the operator wallet.",
+    description: "Receive funds through the demo debit-card rail.",
     settlementTimeLabel: "Within 30 minutes",
     helperText: "Provide the last four digits of the debit card for the demo flow.",
   },
@@ -253,20 +253,19 @@ export function calculateFactoringOffer(
       reason: `Invoice amount falls below the minimum ${formatCurrency(
         env.FACTORING_MIN_INVOICE_AMOUNT,
         input.currency ?? "USD",
-      )} threshold for the managed pool.`,
+      )} threshold for this funding program.`,
     };
   } else if (netProceeds < env.FACTORING_MIN_NET_PROCEEDS) {
     finalEligibility = {
       ...eligibility,
       eligible: false,
-      reason:
-        "Net proceeds fall below the minimum threshold for the managed pool.",
+      reason: "Net proceeds fall below the minimum threshold for this offer.",
     };
   } else if (Number(capitalSource.availableLiquidity.toString()) < netProceeds) {
     finalEligibility = {
       ...eligibility,
       eligible: false,
-      reason: "The pool does not have enough available liquidity for this advance.",
+      reason: "There is not enough funding capacity for this advance.",
     };
   }
 
@@ -329,7 +328,7 @@ export function calculateFactoringOffer(
         `Advance rate: ${formatAdvanceRate(advanceRateBps)} with ${formatDiscountRate(
           discountRateBps,
         )} discount pricing.`,
-        `Protocol fee: ${formatDiscountRate(operatorFeeBps)}. Pool risk tier: ${riskTier}.`,
+        `Platform fee: ${formatDiscountRate(operatorFeeBps)}. Offer risk tier: ${riskTier}.`,
       ],
     },
   };

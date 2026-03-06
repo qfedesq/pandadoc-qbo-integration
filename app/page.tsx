@@ -7,21 +7,21 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const features = [
   {
-    title: "QuickBooks mock or OAuth",
+    title: "Embedded working capital",
     description:
-      "Run the demo fully in mock mode out of the box, or swap in live OAuth credentials later without changing the product flow.",
+      "Let finance teams unlock cash from outstanding invoices without leaving the PandaDoc workflow.",
     icon: ShieldCheck,
   },
   {
-    title: "Invoice normalization",
+    title: "QuickBooks invoice import",
     description:
-      "Outstanding QuickBooks invoices are normalized into a stable internal model ready for future workflows.",
+      "Pull unpaid invoices into a clean dashboard with eligibility, terms, and one-click capital withdrawal.",
     icon: DatabaseZap,
   },
   {
-    title: "Pool and operator views",
+    title: "Retention and monetization",
     description:
-      "Track seller disbursements, pool utilization, accrued yield, and protocol fee balances across dedicated dashboards.",
+      "Show how every funded invoice can create seller value, capital-provider yield, and a fee stream for PandaDoc.",
     icon: Workflow,
   },
 ];
@@ -35,26 +35,26 @@ export default function HomePage() {
             <AppBrand className="w-fit" />
             <div className="space-y-4">
               <span className="inline-flex rounded-full border border-white/12 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-slate-200">
-                PandaDoc ↔ QuickBooks Online
+                Embedded finance for PandaDoc
               </span>
               <h1 className="max-w-4xl font-[var(--font-heading)] text-5xl font-semibold tracking-tight text-balance text-white md:text-6xl">
-                Turn QuickBooks receivables into a Protofire-branded factoring marketplace node.
+                Embed working capital directly into PandaDoc&apos;s invoice workflow.
               </h1>
               <p className="max-w-3xl text-lg text-slate-300">
-                A production-minded workspace for invoice sync, premium seller UX,
-                instant capital withdrawal, pool accounting, and repayment
-                simulation across the full factoring loop.
+                Connect QuickBooks, surface eligible invoices, and let users click
+                &ldquo;Withdraw Capital&rdquo; to turn receivables into immediate
+                liquidity inside the product.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Button asChild size="lg">
                 <Link href="/login">
-                  Open dashboard
+                  Open demo workspace
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/factoring-dashboard">Go to factoring dashboard</Link>
+                <Link href="/factoring-dashboard">View seller flow</Link>
               </Button>
             </div>
           </div>
@@ -66,12 +66,12 @@ export default function HomePage() {
                   Current milestone
                 </p>
                 <h2 className="mt-3 font-[var(--font-heading)] text-2xl font-semibold text-white">
-                  Connect. Import. Withdraw. Track. Repay.
+                  Import invoices. Offer capital. Simulate repayment.
                 </h2>
                 <p className="mt-2 text-sm text-slate-300">
-                  The model supports seller disbursement in demo USDC, operator fee
-                  booking, pool yield tracking, audit trails, and a clean path
-                  toward live infrastructure later.
+                  This MVP demonstrates the full loop: invoice sync, indicative
+                  terms, withdrawal, provider yield, platform fees, and repayment
+                  tracking in one workflow.
                 </p>
               </div>
               <div className="grid gap-3">

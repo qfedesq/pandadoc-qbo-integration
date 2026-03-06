@@ -104,16 +104,19 @@ export function FactoringSetupGuide({
               Guided setup
             </p>
             <CardTitle className="text-white">
-              Connect both systems without manual API setup
+              Activate working capital in three steps
             </CardTitle>
             <p className="max-w-3xl text-sm text-slate-300">
-              A non-technical user only needs to authorize PandaDoc and QuickBooks with their normal credentials. The app handles OAuth, stores tokens server-side, and links both systems through the same dashboard account.
+              A finance team only needs to connect PandaDoc and QuickBooks with
+              the usual sign-in flows. Once both are connected, outstanding
+              invoices can be imported and turned into capital offers inside the
+              same workspace.
             </p>
           </div>
           <div className="w-fit rounded-full border border-white/12 bg-white/8 px-4 py-2 text-sm font-medium text-slate-100">
             {bridgeReady
-              ? "Bridge ready: both accounts are connected"
-              : "Finish both authorizations to activate the bridge"}
+              ? "Ready: invoices can be imported and funded"
+              : "Complete both connections to unlock invoice funding"}
           </div>
         </div>
       </CardHeader>
@@ -121,8 +124,8 @@ export function FactoringSetupGuide({
         <div className="grid gap-4 xl:grid-cols-3">
           <SetupStep
             step="Step 1"
-            title="Authorize PandaDoc"
-            description="Use the normal PandaDoc sign-in flow and let the app store the workspace connection."
+            title="Connect PandaDoc workspace"
+            description="Authorize the PandaDoc workspace where invoice documents and financing actions will live."
             status={pandaDocConnected ? "CONNECTED" : "DISCONNECTED"}
             detail={
               pandaDocConnected
@@ -140,8 +143,8 @@ export function FactoringSetupGuide({
           />
           <SetupStep
             step="Step 2"
-            title="Authorize QuickBooks"
-            description="Use the QuickBooks company login flow so outstanding invoices can be synced automatically."
+            title="Connect QuickBooks company"
+            description="Authorize the accounting source of truth so open invoices can be imported automatically."
             status={quickBooksConnected ? "CONNECTED" : "DISCONNECTED"}
             detail={
               quickBooksConnected
@@ -159,12 +162,12 @@ export function FactoringSetupGuide({
           />
           <SetupStep
             step="Step 3"
-            title="Sync and work invoices"
-            description="Once both providers are connected, refresh outstanding invoices and send selected records into PandaDoc."
+            title="Import invoices and offer capital"
+            description="Refresh outstanding invoices, review eligibility, and start the Withdraw Capital flow on any approved invoice."
             status={quickBooksConnected ? "CONNECTED" : "DISCONNECTED"}
             detail={
               quickBooksConnected
-                ? "Trigger a sync now or wait for the configured periodic refresh window."
+                ? "Sync now to refresh invoices and surface new capital offers."
                 : "QuickBooks must be connected before invoice refresh can start."
             }
             action={

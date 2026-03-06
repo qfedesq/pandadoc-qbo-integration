@@ -27,16 +27,16 @@ export function RecentFactoringTransactions({
     <Card className="border-border/70 shadow-panel">
       <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <CardTitle>Recent factoring positions</CardTitle>
+          <CardTitle>Recent capital advances</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Track each funded invoice from seller disbursement to pool repayment.
+            Track each capital advance from withdrawal through repayment.
           </p>
         </div>
       </CardHeader>
       <CardContent>
         {transactions.length === 0 ? (
           <div className="rounded-[1.25rem] border border-dashed border-border p-6 text-sm text-muted-foreground">
-            No factoring transactions yet. Withdraw capital on an eligible invoice to
+            No capital advances yet. Withdraw capital on an eligible invoice to
             create the first one.
           </div>
         ) : (

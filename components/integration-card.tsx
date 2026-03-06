@@ -45,8 +45,8 @@ export function IntegrationCard({
             <CardTitle>{provider === "PANDADOC" ? "PandaDoc" : "QuickBooks Online"}</CardTitle>
             <CardDescription>
               {provider === "PANDADOC"
-                ? "Store PandaDoc OAuth state and prepare webhook-driven document sync."
-                : "Connect one QuickBooks Online company and import outstanding invoices."}
+                ? "Connect the workspace where invoice documents and financing actions stay inside PandaDoc."
+                : "Connect the accounting system used to import unpaid invoices and refresh repayment status."}
             </CardDescription>
           </div>
           <StatusBadge status={connection?.status ?? "DISCONNECTED"} />

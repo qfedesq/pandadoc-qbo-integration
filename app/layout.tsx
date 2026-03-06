@@ -18,9 +18,9 @@ const bodyFont = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: `Protofire Factoring Dashboard ${APP_DISPLAY_VERSION}`,
+  title: `PandaDoc Working Capital Demo ${APP_DISPLAY_VERSION}`,
   description:
-    "Protofire-branded PandaDoc and QuickBooks factoring workspace with invoice sync, withdraw-capital flows, Arena StaFi-ready settlement simulation, and scheduled refresh.",
+    "Embedded working capital demo for PandaDoc with QuickBooks invoice sync, capital offers, withdrawals, repayment tracking, and operator visibility.",
 };
 
 export default function RootLayout({

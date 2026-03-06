@@ -55,7 +55,7 @@ export function InvoiceTable({
             <TableHead>Amount</TableHead>
             <TableHead>Due date</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Factoring</TableHead>
+            <TableHead>Working capital</TableHead>
             <TableHead>PandaDoc</TableHead>
             <TableHead>Last synced</TableHead>
             <TableHead className="text-right">Action</TableHead>
@@ -108,7 +108,7 @@ export function InvoiceTable({
                           {latestTransaction.transactionReference}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          Net{" "}
+                          Advanced{" "}
                           {formatCurrency(
                             latestTransaction.netProceeds.toString(),
                             latestTransaction.settlementCurrency,
@@ -127,15 +127,16 @@ export function InvoiceTable({
                         <StatusBadge status={eligibility.status} />
                         <div className="text-xs text-muted-foreground">
                           {invoice.factoringOffer
-                            ? `Indicative net ${formatCurrency(
+                            ? `Available now ${formatCurrency(
                                 invoice.factoringOffer.netProceeds.toString(),
                                 invoice.factoringOffer.settlementCurrency,
                               )}`
-                            : "No terms generated yet"}
+                            : "No offer generated yet"}
                         </div>
                         {invoice.factoringOffer ? (
                           <div className="text-xs text-muted-foreground">
-                            Advance {(invoice.factoringOffer.advanceRateBps / 100).toFixed(2)}%
+                            Advance rate{" "}
+                            {(invoice.factoringOffer.advanceRateBps / 100).toFixed(2)}%
                           </div>
                         ) : null}
                         {eligibility.reason ? (
@@ -144,7 +145,7 @@ export function InvoiceTable({
                           </div>
                         ) : (
                           <div className="text-xs text-muted-foreground">
-                            Discount{" "}
+                            Fee{" "}
                             {invoice.factoringOffer
                               ? `${(invoice.factoringOffer.discountRateBps / 100).toFixed(2)}%`
                               : "TBD"}
@@ -175,7 +176,7 @@ export function InvoiceTable({
                         className="inline-flex h-10 items-center justify-center rounded-full border border-white/14 bg-white/5 px-5 text-sm font-semibold transition-all duration-300 hover:border-white/24 hover:bg-white/10"
                         href={`/factoring-dashboard/transactions/${latestTransaction.id}`}
                       >
-                        View transaction
+                        View advance
                       </Link>
                     ) : (
                       <WithdrawCapitalButton

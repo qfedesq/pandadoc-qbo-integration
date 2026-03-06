@@ -12,7 +12,7 @@ const parsedMockInvoices = quickBooksQueryResponseSchema.parse(
 export function getMockQuickBooksCompanyInfo() {
   return {
     realmId: "mock-realm-9130357992222222",
-    companyName: "Protofire SaaS Demo LLC",
+    companyName: "Northstar SaaS Holdings LLC",
     country: "US",
     currency: "USD",
   };

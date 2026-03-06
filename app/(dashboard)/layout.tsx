@@ -18,7 +18,8 @@ export default async function DashboardLayout({
           <div className="space-y-3">
             <AppBrand href="/" compact />
             <p className="max-w-xl text-sm text-muted-foreground">
-              Secure OAuth, QuickBooks invoice sync, Arena StaFi-ready settlement simulation, and PandaDoc factoring operations.
+              Connect PandaDoc and QuickBooks, import invoices, and move from
+              unpaid receivables to funded advances in one workflow.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">

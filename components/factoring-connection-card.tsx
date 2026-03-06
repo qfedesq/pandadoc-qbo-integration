@@ -92,10 +92,14 @@ export function FactoringConnectionCard({
             <input type="hidden" name="redirectTo" value="/factoring-dashboard" />
             <Button type="submit" variant={isConnected ? "secondary" : "default"}>
               {isConnected
-                ? "Reconnect here"
+                ? provider === Provider.PANDADOC
+                  ? "Reconnect workspace"
+                  : "Reconnect company"
                 : provider === Provider.QUICKBOOKS && isQuickBooksMockMode()
                   ? "Connect demo company"
-                  : "Connect here"}
+                  : provider === Provider.PANDADOC
+                    ? "Connect workspace"
+                    : "Connect company"}
             </Button>
           </form>
         ) : (
@@ -105,7 +109,7 @@ export function FactoringConnectionCard({
         )}
         <Button asChild variant="outline">
           <Link href="/integrations">
-            {isConnected ? "Integration settings" : "Open setup settings"}
+            {isConnected ? "View integration settings" : "Open integration setup"}
           </Link>
         </Button>
       </CardFooter>
