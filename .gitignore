@@ -1,0 +1,12 @@
+.DS_Store
+.next
+coverage
+node_modules
+playwright-report
+test-results
+dist
+.env
+.env.local
+prisma/dev.db
+*.log
+tsconfig.tsbuildinfo

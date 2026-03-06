@@ -1,0 +1,23 @@
+{
+  "Id": "9003",
+  "DocNumber": "INV-9003",
+  "TotalAmt": 2400,
+  "Balance": 600,
+  "DueDate": "2026-03-15",
+  "TxnDate": "2026-02-27",
+  "CurrencyRef": {
+    "value": "USD",
+    "name": "United States Dollar"
+  },
+  "CustomerRef": {
+    "value": "24",
+    "name": "Globex Corporation"
+  },
+  "BillEmail": {
+    "Address": "finance@globex.example"
+  },
+  "MetaData": {
+    "CreateTime": "2026-02-27T08:30:00Z",
+    "LastUpdatedTime": "2026-03-01T11:00:00Z"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "Id": "9004",
+  "DocNumber": "INV-9004",
+  "TotalAmt": 500,
+  "Balance": 0,
+  "DueDate": "2026-03-05",
+  "TxnDate": "2026-02-15",
+  "CurrencyRef": {
+    "value": "USD",
+    "name": "United States Dollar"
+  },
+  "CustomerRef": {
+    "value": "31",
+    "name": "Umbrella Retail"
+  },
+  "BillEmail": {
+    "Address": "billing@umbrella.example"
+  },
+  "MetaData": {
+    "CreateTime": "2026-02-15T08:30:00Z",
+    "LastUpdatedTime": "2026-03-04T11:00:00Z"
+  }
+}

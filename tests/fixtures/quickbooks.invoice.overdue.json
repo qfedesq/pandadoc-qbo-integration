@@ -1,0 +1,23 @@
+{
+  "Id": "9002",
+  "DocNumber": "INV-9002",
+  "TotalAmt": 980,
+  "Balance": 980,
+  "DueDate": "2026-02-20",
+  "TxnDate": "2026-02-01",
+  "CurrencyRef": {
+    "value": "USD",
+    "name": "United States Dollar"
+  },
+  "CustomerRef": {
+    "value": "18",
+    "name": "Northwind Traders"
+  },
+  "BillEmail": {
+    "Address": "ap@northwind.example"
+  },
+  "MetaData": {
+    "CreateTime": "2026-02-01T10:00:00Z",
+    "LastUpdatedTime": "2026-03-01T11:00:00Z"
+  }
+}

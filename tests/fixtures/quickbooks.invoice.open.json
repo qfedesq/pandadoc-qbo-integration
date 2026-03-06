@@ -1,0 +1,23 @@
+{
+  "Id": "9001",
+  "DocNumber": "INV-9001",
+  "TotalAmt": 1250,
+  "Balance": 1250,
+  "DueDate": "2026-03-20",
+  "TxnDate": "2026-03-01",
+  "CurrencyRef": {
+    "value": "USD",
+    "name": "United States Dollar"
+  },
+  "CustomerRef": {
+    "value": "12",
+    "name": "Acme Holdings"
+  },
+  "BillEmail": {
+    "Address": "billing@acme.example"
+  },
+  "MetaData": {
+    "CreateTime": "2026-03-01T10:00:00Z",
+    "LastUpdatedTime": "2026-03-01T11:00:00Z"
+  }
+}

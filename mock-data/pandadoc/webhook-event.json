@@ -1,0 +1,9 @@
+{
+  "event": "document_state_changed",
+  "event_id": "evt_demo_001",
+  "data": {
+    "document_id": "doc_demo_001",
+    "status": "document.completed",
+    "name": "Invoice Approval Packet"
+  }
+}
