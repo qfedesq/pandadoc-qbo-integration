@@ -116,11 +116,25 @@ export function assertSecureTokenEncryptionConfiguration() {
   }
 }
 
-export function assertSecureCronConfiguration() {
-  if (
-    env.NODE_ENV === "production" &&
-    env.INTERNAL_SYNC_SECRET === defaultCronSecret
-  ) {
+function isDefaultSyncSecret(secret: string | undefined) {
+  return !secret || secret === defaultCronSecret;
+}
+
+export function assertSecureCronConfiguration(options?: {
+  requireVercelCronSecret?: boolean;
+}) {
+  if (env.NODE_ENV !== "production") {
+    return;
+  }
+
+  const hasSecureInternalSecret = !isDefaultSyncSecret(env.INTERNAL_SYNC_SECRET);
+  const hasSecureCronSecret = !isDefaultSyncSecret(env.CRON_SECRET);
+
+  if (options?.requireVercelCronSecret && !hasSecureCronSecret) {
+    throw new Error("CRON_SECRET must be explicitly set in production.");
+  }
+
+  if (!hasSecureInternalSecret && !hasSecureCronSecret) {
     throw new Error(
       "INTERNAL_SYNC_SECRET or CRON_SECRET must be explicitly set in production.",
     );

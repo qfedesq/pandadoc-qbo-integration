@@ -189,6 +189,11 @@ QuickBooks OAuth:
 - `QUICKBOOKS_TOKEN_URL`
 - `QUICKBOOKS_MINOR_VERSION`
 
+Vercel deployment note:
+
+- `CRON_SECRET` should be set in Vercel if you use the built-in Vercel Cron entrypoint at `/api/cron/invoices-sync`
+- `INTERNAL_SYNC_SECRET` should be set if you also want to trigger `POST /api/invoices/sync` from another internal scheduler or worker
+
 ## PandaDoc OAuth configuration
 
 Use your PandaDoc OAuth app settings to register the callback URL:
@@ -279,6 +284,35 @@ Design notes:
 - User-triggered sync always forces an immediate refresh for the selected connection.
 - The route returns the effective `dueOnly` mode and interval so cron orchestration can be observed easily.
 
+Vercel Cron:
+
+- This repository includes [vercel.json](/Users/qfedesq/Desktop/PandaDoc/vercel.json) with a built-in hourly cron:
+
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/invoices-sync",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
+```
+
+- Vercel calls `GET /api/cron/invoices-sync`
+- The route only accepts `Authorization: Bearer <CRON_SECRET>`
+- The default hourly schedule matches the default `INVOICE_SYNC_INTERVAL_MINUTES=60`
+- If you lower `INVOICE_SYNC_INTERVAL_MINUTES` below 60, update [vercel.json](/Users/qfedesq/Desktop/PandaDoc/vercel.json) so the cron runs at least that often
+
+Vercel deployment checklist:
+
+1. Import the GitHub repo into Vercel
+2. Set all production environment variables, especially `APP_BASE_URL`, `DATABASE_URL`, `TOKEN_ENCRYPTION_KEY`, `CRON_SECRET`, `INTERNAL_SYNC_SECRET`, PandaDoc OAuth values, and QuickBooks OAuth values
+3. Point PandaDoc and QuickBooks redirect URIs at the production domain
+4. Run `prisma migrate deploy` against the production database
+5. Redeploy the project after env var changes
+6. Confirm `GET /api/cron/invoices-sync` is listed in the Vercel Cron settings and protected by `CRON_SECRET`
+
 Example cron trigger:
 
 ```bash
@@ -289,7 +323,7 @@ curl -X POST \
 
 Production wiring examples:
 
-- Vercel Cron -> `POST /api/invoices/sync`
+- Vercel Cron -> `GET /api/cron/invoices-sync`
 - GitHub Actions schedule -> `curl` the internal route with the shared secret
 - ECS/Fly/Render cron worker -> invoke the same route or call the shared sync service directly
 

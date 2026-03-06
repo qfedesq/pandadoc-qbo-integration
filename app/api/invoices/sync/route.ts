@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getCurrentSessionUser } from "@/lib/auth/session";
-import { assertSecureCronConfiguration, env } from "@/lib/env";
 import { runConfiguredInvoiceSync } from "@/lib/invoices/scheduled-sync";
 import { logger } from "@/lib/logging/logger";
 import { assertValidAppRequestOrigin } from "@/lib/security/origin";
 import { enforceRateLimit, getRequestIp } from "@/lib/security/rate-limit";
+import { isAuthorizedSyncRequest } from "@/lib/security/sync-auth";
 import { getPublicError } from "@/lib/utils/errors";
 
 const syncRequestSchema = z
@@ -17,20 +17,9 @@ const syncRequestSchema = z
   })
   .strict();
 
-function isAuthorizedCronRequest(request: Request) {
-  const authHeader = request.headers.get("authorization");
-
-  if (!authHeader) {
-    return false;
-  }
-
-  assertSecureCronConfiguration();
-  return authHeader === `Bearer ${env.INTERNAL_SYNC_SECRET}`;
-}
-
 export async function POST(request: Request) {
   const user = await getCurrentSessionUser();
-  const cronAuthorized = isAuthorizedCronRequest(request);
+  const cronAuthorized = isAuthorizedSyncRequest(request);
 
   if (!user && !cronAuthorized) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
