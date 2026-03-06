@@ -1,6 +1,6 @@
 {
-  "name": "pandadoc-qbo-integration-v1-10",
-  "version": "1.10.0",
+  "name": "pandadoc-qbo-integration-v1-11",
+  "version": "1.11.0",
   "private": true,
   "type": "module",
   "engines": {
