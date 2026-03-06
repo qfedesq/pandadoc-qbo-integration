@@ -35,6 +35,7 @@ const envSchema = z.object({
     )
     .default(true),
   INVOICE_SYNC_INTERVAL_MINUTES: z.coerce.number().int().positive().default(60),
+  PANDADOC_MODE: z.enum(["mock", "oauth"]).default("mock"),
   QUICKBOOKS_MODE: z.enum(["mock", "oauth"]).default("mock"),
   FACTORING_BASE_DISCOUNT_BPS: z.coerce.number().int().positive().default(450),
   FACTORING_PARTIAL_PAYMENT_DISCOUNT_BPS: z.coerce
@@ -158,6 +159,10 @@ export function getGoogleAllowedEmailDomains() {
 }
 
 export function hasPandaDocOauthConfig() {
+  if (isPandaDocMockMode()) {
+    return true;
+  }
+
   return Boolean(
     isConfiguredValue(env.PANDADOC_CLIENT_ID) &&
       isConfiguredValue(env.PANDADOC_CLIENT_SECRET),
@@ -165,9 +170,11 @@ export function hasPandaDocOauthConfig() {
 }
 
 export function hasPandaDocImportConfig() {
-  return Boolean(
-    hasPandaDocOauthConfig() && isConfiguredValue(env.PANDADOC_TEMPLATE_UUID),
-  );
+  if (isPandaDocMockMode()) {
+    return true;
+  }
+
+  return hasPandaDocOauthConfig() && isConfiguredValue(env.PANDADOC_TEMPLATE_UUID);
 }
 
 export function hasQuickBooksOauthConfig() {
@@ -179,6 +186,10 @@ export function hasQuickBooksOauthConfig() {
 
 export function isQuickBooksMockMode() {
   return env.QUICKBOOKS_MODE === "mock";
+}
+
+export function isPandaDocMockMode() {
+  return env.PANDADOC_MODE === "mock";
 }
 
 export function assertSecureTokenEncryptionConfiguration() {

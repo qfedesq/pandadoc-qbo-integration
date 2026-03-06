@@ -8,6 +8,7 @@ vi.mock("@/lib/env", () => ({
     PANDADOC_SEND_ON_IMPORT: false,
   },
   hasPandaDocImportConfig: () => true,
+  isPandaDocMockMode: () => false,
 }));
 
 import { importInvoiceToPandaDoc } from "@/lib/pandadoc/import-invoice";
