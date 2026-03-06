@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Space_Grotesk } from "next/font/google";
 
+import { AppVersionBadge } from "@/components/app-version-badge";
+import { APP_DISPLAY_VERSION } from "@/lib/app-version";
+
 import "./globals.css";
 
 const headingFont = Space_Grotesk({
@@ -15,9 +18,9 @@ const bodyFont = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "PandaDoc QBO Integration",
+  title: `Protofire Factoring Dashboard ${APP_DISPLAY_VERSION}`,
   description:
-    "Production-ready foundation for PandaDoc and QuickBooks Online invoice sync workflows.",
+    "Protofire-branded PandaDoc and QuickBooks factoring workspace with invoice sync, document import, and scheduled refresh.",
 };
 
 export default function RootLayout({
@@ -27,7 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${headingFont.variable} ${bodyFont.variable}`}>
-      <body className="font-[var(--font-body)]">{children}</body>
+      <body className="font-[var(--font-body)]">
+        {children}
+        <AppVersionBadge />
+      </body>
     </html>
   );
 }

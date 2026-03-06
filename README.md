@@ -1,4 +1,4 @@
-# pandadoc-qbo-integration
+# pandadoc-qbo-integration v1.0
 
 ![Next.js 15](https://img.shields.io/badge/Next.js-15-black)
 ![TypeScript Strict](https://img.shields.io/badge/TypeScript-strict-3178C6)
@@ -6,11 +6,16 @@
 ![Playwright Smoke Tested](https://img.shields.io/badge/Playwright-smoke--tested-45BA63)
 ![Demo Ready](https://img.shields.io/badge/Status-demo--ready-0F766E)
 
-Production-ready foundation for connecting PandaDoc and QuickBooks Online, importing outstanding QuickBooks invoices, and preparing future cross-system workflows.
+Protofire-branded factoring workspace for connecting PandaDoc and QuickBooks Online, importing outstanding QuickBooks invoices, and preparing future cross-system workflows.
+
+Current release:
+
+- `V1.0`
+- repository target name: `pandadoc-qbo-integration-v1-0`
 
 ## Demo summary
 
-This repository demonstrates a complete PandaDoc + QuickBooks Online integration workflow:
+This repository demonstrates a complete Protofire-styled PandaDoc + QuickBooks Online integration workflow:
 
 - sign in with Google using a verified Gmail account
 - connect PandaDoc with OAuth 2.0
@@ -35,6 +40,15 @@ Primary demo actions:
 ## Dashboard preview
 
 ![PandaDoc Factoring Dashboard demo](./public/factoring-dashboard-demo.png)
+
+## Brand adaptation
+
+The UI now adapts to the provided Protofire brand kit:
+
+- Protofire wordmark and logomark assets from the shared brand package
+- dark atmospheric surfaces with orange-led gradients inspired by the brandbook
+- productized login and dashboard surfaces instead of a neutral admin shell
+- fixed release badge in the lower-right corner using the current app version
 
 ## Local demo access
 
@@ -79,7 +93,9 @@ For a reviewer or stakeholder demo, the shortest path is:
 - `lib/jobs/`: queue abstraction. The default implementation is inline, but the interface is ready for a real queue.
 - `lib/webhooks/`: PandaDoc webhook validation and persistence.
 - `lib/security/`: request-origin validation, encrypted secret handling, hashing, and database-backed rate limiting.
+- `lib/app-version.ts`: single source for the displayed release version and versioned repository name.
 - `prisma/`: schema, SQL migration, and seed script.
+- `.github/workflows/`: release automation, including the auto minor-version bump on `main`.
 - `tests/`: unit, integration, and Playwright smoke coverage.
 - `mock-data/`: sample provider payloads for local development and debugging.
 
@@ -115,6 +131,23 @@ For a reviewer or stakeholder demo, the shortest path is:
 
 - Node.js 20.19+ for local development and production builds
 - PostgreSQL 16+
+
+## Release versioning
+
+The app shows the current release in the lower-right corner as `V<major>.<minor>`.
+
+Source of truth:
+
+- `package.json` version
+
+Current behavior:
+
+- this repo starts at `1.0.0`, displayed as `V1.0`
+- every new push to `main` triggers `.github/workflows/bump-app-version.yml`
+- that workflow bumps the minor version automatically (`1.0.0` -> `1.1.0`)
+- the follow-up commit is pushed back with `[skip version bump]` to prevent loops
+
+If you need to push a release-shaping commit without consuming the next minor bump, include `[skip version bump]` in the commit message.
 
 ## Setup
 

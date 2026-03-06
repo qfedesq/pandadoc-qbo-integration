@@ -4,43 +4,132 @@
 
 @layer base {
   :root {
-    --background: 42 36% 96%;
-    --foreground: 144 21% 16%;
-    --card: 0 0% 100%;
-    --card-foreground: 144 21% 16%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 144 21% 16%;
-    --primary: 112 45% 35%;
-    --primary-foreground: 42 80% 98%;
-    --secondary: 41 45% 91%;
-    --secondary-foreground: 144 21% 20%;
-    --muted: 42 28% 92%;
-    --muted-foreground: 143 11% 40%;
-    --accent: 87 42% 84%;
-    --accent-foreground: 145 35% 18%;
-    --destructive: 0 74% 42%;
+    --background: 233 29% 8%;
+    --foreground: 210 33% 96%;
+    --card: 228 24% 12%;
+    --card-foreground: 210 33% 96%;
+    --popover: 229 23% 11%;
+    --popover-foreground: 210 33% 96%;
+    --primary: 16 98% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 228 22% 17%;
+    --secondary-foreground: 210 28% 92%;
+    --muted: 228 18% 15%;
+    --muted-foreground: 217 18% 67%;
+    --accent: 37 95% 53%;
+    --accent-foreground: 232 34% 11%;
+    --destructive: 353 83% 61%;
     --destructive-foreground: 0 0% 98%;
-    --border: 40 21% 84%;
-    --input: 40 21% 84%;
-    --ring: 112 45% 35%;
+    --border: 228 18% 24%;
+    --input: 228 18% 24%;
+    --ring: 16 98% 49%;
     --radius: 1rem;
+    --brand-orange: 245 71 3;
+    --brand-yellow: 250 201 2;
+    --brand-magenta: 210 41 196;
+    --brand-violet: 123 97 255;
+    --brand-azure: 71 142 255;
+    --brand-green: 30 196 108;
+    --brand-black: 8 10 18;
+    color-scheme: dark;
   }
 
   * {
     @apply border-border;
   }
 
+  html {
+    background: rgb(var(--brand-black));
+  }
+
   body {
     @apply min-h-screen bg-background text-foreground antialiased;
     background-image:
-      radial-gradient(circle at top left, rgba(131, 179, 68, 0.12), transparent 26%),
-      radial-gradient(circle at top right, rgba(248, 220, 169, 0.18), transparent 28%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.9));
+      radial-gradient(circle at 12% 10%, rgba(245, 71, 3, 0.28), transparent 22%),
+      radial-gradient(circle at 82% 14%, rgba(71, 142, 255, 0.22), transparent 22%),
+      radial-gradient(circle at 55% 60%, rgba(210, 41, 196, 0.12), transparent 24%),
+      radial-gradient(circle at 50% 115%, rgba(30, 196, 108, 0.16), transparent 28%),
+      linear-gradient(180deg, rgba(8, 10, 18, 0.92), rgba(8, 10, 18, 1));
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(130deg, transparent 0%, rgba(255, 255, 255, 0.04) 45%, transparent 100%);
+    background-size: 28px 28px, 100% 100%;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.65), transparent 92%);
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: -2;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: auto -10% -28% auto;
+    width: 46rem;
+    height: 46rem;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(245, 71, 3, 0.32), transparent 48%),
+      radial-gradient(circle at 70% 45%, rgba(250, 201, 2, 0.18), transparent 55%),
+      radial-gradient(circle at 40% 70%, rgba(210, 41, 196, 0.18), transparent 60%);
+    filter: blur(70px);
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+
+  ::selection {
+    background: rgba(245, 71, 3, 0.3);
+    color: white;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .protofire-panel {
+    background:
+      linear-gradient(180deg, rgba(25, 29, 46, 0.92), rgba(12, 15, 27, 0.92)),
+      radial-gradient(circle at top, rgba(245, 71, 3, 0.1), transparent 50%);
+    box-shadow:
+      0 28px 80px rgba(0, 0, 0, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .protofire-border {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .protofire-hero {
+    background:
+      radial-gradient(circle at top left, rgba(245, 71, 3, 0.24), transparent 32%),
+      radial-gradient(circle at top right, rgba(71, 142, 255, 0.2), transparent 28%),
+      linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  }
+
+  .protofire-wave {
+    background-image:
+      radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1), transparent 68%),
+      repeating-radial-gradient(
+        circle at 20% 120%,
+        rgba(255, 255, 255, 0.12) 0 1px,
+        transparent 1px 22px
+      );
+    background-size: 100% 100%, 180% 140%;
+    background-position: center, bottom left;
+    opacity: 0.85;
   }
 }

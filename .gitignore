@@ -11,3 +11,4 @@ prisma/dev.db
 *.log
 tsconfig.tsbuildinfo
 .vercel
+tmp

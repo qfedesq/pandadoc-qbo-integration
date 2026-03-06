@@ -31,7 +31,7 @@ export function FactoringConnectionCard({
   const isConnected = connection?.status === "CONNECTED";
 
   return (
-    <Card className="h-full border-border/70 bg-white/85 shadow-panel">
+    <Card className="h-full">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
@@ -65,7 +65,7 @@ export function FactoringConnectionCard({
           </p>
         </div>
         {connection?.lastError ? (
-          <div className="rounded-2xl bg-rose-50 px-3 py-2 text-rose-700">
+          <div className="rounded-2xl border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-rose-100">
             {connection.lastError}
           </div>
         ) : null}

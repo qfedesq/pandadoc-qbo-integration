@@ -30,14 +30,14 @@ export function InvoiceTable({
 }) {
   if (invoices.length === 0) {
     return (
-      <div className="rounded-[1.5rem] border border-dashed border-border bg-white/70 p-10 text-center text-sm text-muted-foreground">
+      <div className="protofire-panel rounded-[1.5rem] border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
         No invoices match the current filters.
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-white/85 shadow-panel">
+    <div className="overflow-hidden rounded-[1.5rem] border border-border/70 protofire-panel shadow-panel">
       <Table>
         <TableHeader>
           <TableRow>

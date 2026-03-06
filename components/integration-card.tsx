@@ -69,7 +69,7 @@ export function IntegrationCard({
           </span>
         </p>
         {connection?.lastError ? (
-          <p className="rounded-2xl bg-rose-50 px-3 py-2 text-rose-700">
+          <p className="rounded-2xl border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-rose-100">
             {connection.lastError}
           </p>
         ) : null}

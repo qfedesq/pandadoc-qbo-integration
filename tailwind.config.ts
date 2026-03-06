@@ -55,11 +55,13 @@ const config: Config = {
       },
       boxShadow: {
         panel:
-          "0 10px 30px rgba(36, 59, 46, 0.08), 0 2px 10px rgba(36, 59, 46, 0.05)",
+          "0 28px 80px rgba(0, 0, 0, 0.42), 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+        glow:
+          "0 0 0 1px rgba(245, 71, 3, 0.2), 0 14px 36px rgba(245, 71, 3, 0.28)",
       },
       backgroundImage: {
         "hero-grid":
-          "radial-gradient(circle at top left, rgba(141, 198, 63, 0.15), transparent 30%), radial-gradient(circle at bottom right, rgba(21, 87, 36, 0.14), transparent 26%)",
+          "radial-gradient(circle at top left, rgba(245, 71, 3, 0.25), transparent 30%), radial-gradient(circle at bottom right, rgba(71, 142, 255, 0.2), transparent 26%)",
       },
     },
   },

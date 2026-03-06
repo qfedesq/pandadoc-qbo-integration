@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, DatabaseZap, ShieldCheck, Workflow } from "lucide-react";
 
+import { AppBrand } from "@/components/app-brand";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -29,17 +30,18 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       <section className="container py-12 md:py-20">
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-          <div className="space-y-6">
-            <span className="inline-flex rounded-full border border-border bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              PandaDoc ↔ QuickBooks Online
-            </span>
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div className="space-y-7">
+            <AppBrand className="w-fit" />
             <div className="space-y-4">
-              <h1 className="max-w-3xl font-[var(--font-heading)] text-5xl font-semibold tracking-tight text-balance md:text-6xl">
-                Sync outstanding QuickBooks invoices into a PandaDoc-ready control plane.
+              <span className="inline-flex rounded-full border border-white/12 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-slate-200">
+                PandaDoc ↔ QuickBooks Online
+              </span>
+              <h1 className="max-w-4xl font-[var(--font-heading)] text-5xl font-semibold tracking-tight text-balance text-white md:text-6xl">
+                Turn QuickBooks receivables into a Protofire-branded factoring command center.
               </h1>
-              <p className="max-w-2xl text-lg text-muted-foreground">
-                `pandadoc-qbo-integration` is a production-minded Next.js foundation with secure OAuth, token refresh, invoice normalization, webhook ingestion, and background-sync hooks.
+              <p className="max-w-3xl text-lg text-slate-300">
+                A production-minded workspace for secure OAuth, outstanding invoice normalization, PandaDoc document import, and scheduled sync across the full factoring loop.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -54,28 +56,29 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <Card className="overflow-hidden border-none bg-hero-grid">
-            <CardContent className="space-y-4 p-8">
-              <div className="rounded-[1.25rem] border border-white/60 bg-white/80 p-5 backdrop-blur">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <Card className="protofire-hero relative overflow-hidden border border-white/12">
+            <div className="protofire-wave absolute inset-0 opacity-35" />
+            <CardContent className="relative space-y-4 p-8">
+              <div className="rounded-[1.25rem] border border-white/12 bg-white/6 p-5 backdrop-blur">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-300">
                   Current milestone
                 </p>
-                <h2 className="mt-3 font-[var(--font-heading)] text-2xl font-semibold">
-                  Connect. Import. Normalize. Re-sync.
+                <h2 className="mt-3 font-[var(--font-heading)] text-2xl font-semibold text-white">
+                  Connect. Import. Normalize. Re-sync. Send.
                 </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  The data model already anticipates document-to-invoice links, payment propagation, and PandaDoc document generation from invoice data.
+                <p className="mt-2 text-sm text-slate-300">
+                  The model already supports invoice-to-document links, webhook updates, and future payment propagation back into the factoring workflow.
                 </p>
               </div>
               <div className="grid gap-3">
                 {features.map((feature) => (
                   <div
                     key={feature.title}
-                    className="rounded-[1.25rem] border border-border/60 bg-white/85 p-5"
+                    className="rounded-[1.25rem] border border-white/12 bg-white/6 p-5 backdrop-blur"
                   >
                     <feature.icon className="h-5 w-5 text-primary" />
-                    <h3 className="mt-3 font-semibold">{feature.title}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <h3 className="mt-3 font-semibold text-white">{feature.title}</h3>
+                    <p className="mt-1 text-sm text-slate-300">
                       {feature.description}
                     </p>
                   </div>

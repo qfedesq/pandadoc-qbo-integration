@@ -103,7 +103,7 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
         />
       </div>
 
-      <Card className="border-border/70 bg-white/85 shadow-panel">
+      <Card className="border-border/70 shadow-panel">
         <CardHeader>
           <CardTitle>Sync operations</CardTitle>
         </CardHeader>

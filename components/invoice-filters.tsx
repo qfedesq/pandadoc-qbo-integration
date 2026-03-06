@@ -14,7 +14,7 @@ export function InvoiceFilters({
   overdueOnly?: boolean;
 }) {
   return (
-    <form className="grid gap-3 rounded-[1.5rem] border border-border/70 bg-white/80 p-4 md:grid-cols-[2fr_1fr_auto_auto]">
+    <form className="protofire-panel grid gap-3 rounded-[1.5rem] border border-border/70 p-4 md:grid-cols-[2fr_1fr_auto_auto]">
       <Input
         name="q"
         defaultValue={search}
@@ -28,7 +28,7 @@ export function InvoiceFilters({
           </option>
         ))}
       </Select>
-      <label className="flex items-center gap-2 rounded-full border border-border px-4 text-sm font-medium text-foreground">
+      <label className="flex items-center gap-2 rounded-full border border-border bg-white/5 px-4 text-sm font-medium text-foreground">
         <input defaultChecked={overdueOnly} name="overdue" type="checkbox" value="true" />
         Overdue only
       </label>
