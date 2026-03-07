@@ -16,13 +16,13 @@ export function AppBrand({
     <Link
       href={href}
       className={cn(
-        "group inline-flex items-center gap-4 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-left backdrop-blur transition-transform duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10",
+        "group inline-flex items-center gap-3 rounded-xl border border-border/80 bg-card/80 px-4 py-3 text-left transition-colors duration-200 hover:bg-card",
         compact && "gap-3 px-3 py-2.5",
         className,
       )}
     >
-      <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/12 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.26),_rgba(255,255,255,0.08)_40%,_rgba(2,6,23,0.85)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
-        <span className="font-[var(--font-heading)] text-sm font-semibold tracking-[0.14em] text-white">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border/80 bg-primary/10 text-primary">
+        <span className="font-[var(--font-heading)] text-sm font-semibold tracking-[0.14em]">
           PD
         </span>
       </div>
@@ -35,11 +35,11 @@ export function AppBrand({
         >
           PandaDoc Working Capital
         </div>
-        <div className="mt-1 flex flex-wrap items-center gap-2 text-[0.68rem] uppercase tracking-[0.22em] text-slate-300">
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-[0.66rem] uppercase tracking-[0.18em] text-muted-foreground">
           <span>Embedded finance demo</span>
-          <span className="hidden h-1 w-1 rounded-full bg-slate-500 sm:block" />
+          <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />
           <span>Built with Protofire</span>
-          <span className="hidden h-1 w-1 rounded-full bg-slate-500 sm:block" />
+          <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />
           <span>{APP_DISPLAY_VERSION}</span>
         </div>
       </div>

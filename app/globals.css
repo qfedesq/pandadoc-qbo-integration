@@ -45,11 +45,9 @@
   body {
     @apply min-h-screen bg-background text-foreground antialiased;
     background-image:
-      radial-gradient(circle at 12% 10%, rgba(245, 71, 3, 0.28), transparent 22%),
-      radial-gradient(circle at 82% 14%, rgba(71, 142, 255, 0.22), transparent 22%),
-      radial-gradient(circle at 55% 60%, rgba(210, 41, 196, 0.12), transparent 24%),
-      radial-gradient(circle at 50% 115%, rgba(30, 196, 108, 0.16), transparent 28%),
-      linear-gradient(180deg, rgba(8, 10, 18, 0.92), rgba(8, 10, 18, 1));
+      radial-gradient(circle at top left, rgba(245, 71, 3, 0.1), transparent 24%),
+      radial-gradient(circle at top right, rgba(71, 142, 255, 0.08), transparent 20%),
+      linear-gradient(180deg, rgba(8, 10, 18, 0.98), rgba(8, 10, 18, 1));
     position: relative;
     overflow-x: hidden;
   }
@@ -59,11 +57,15 @@
     position: fixed;
     inset: 0;
     background-image:
-      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(130deg, transparent 0%, rgba(255, 255, 255, 0.04) 45%, transparent 100%);
-    background-size: 28px 28px, 100% 100%;
+      linear-gradient(
+        90deg,
+        transparent 0,
+        transparent calc(100% - 1px),
+        rgba(255, 255, 255, 0.03) calc(100% - 1px)
+      );
+    background-size: 36px 36px;
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.65), transparent 92%);
-    opacity: 0.45;
+    opacity: 0.18;
     pointer-events: none;
     z-index: -2;
   }
@@ -71,16 +73,15 @@
   body::after {
     content: "";
     position: fixed;
-    inset: auto -10% -28% auto;
-    width: 46rem;
-    height: 46rem;
+    inset: auto -8rem -10rem auto;
+    width: 26rem;
+    height: 26rem;
     border-radius: 999px;
     background:
-      radial-gradient(circle at 30% 30%, rgba(245, 71, 3, 0.32), transparent 48%),
-      radial-gradient(circle at 70% 45%, rgba(250, 201, 2, 0.18), transparent 55%),
-      radial-gradient(circle at 40% 70%, rgba(210, 41, 196, 0.18), transparent 60%);
-    filter: blur(70px);
-    opacity: 0.8;
+      radial-gradient(circle at 35% 35%, rgba(245, 71, 3, 0.18), transparent 45%),
+      radial-gradient(circle at 70% 50%, rgba(71, 142, 255, 0.12), transparent 55%);
+    filter: blur(92px);
+    opacity: 0.45;
     pointer-events: none;
     z-index: -1;
   }
@@ -101,35 +102,8 @@
   }
 
   .protofire-panel {
-    background:
-      linear-gradient(180deg, rgba(25, 29, 46, 0.92), rgba(12, 15, 27, 0.92)),
-      radial-gradient(circle at top, rgba(245, 71, 3, 0.1), transparent 50%);
-    box-shadow:
-      0 28px 80px rgba(0, 0, 0, 0.42),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    background: linear-gradient(180deg, rgba(19, 23, 37, 0.96), rgba(12, 15, 27, 0.96));
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
   }
 
-  .protofire-border {
-    border-color: rgba(255, 255, 255, 0.12);
-  }
-
-  .protofire-hero {
-    background:
-      radial-gradient(circle at top left, rgba(245, 71, 3, 0.24), transparent 32%),
-      radial-gradient(circle at top right, rgba(71, 142, 255, 0.2), transparent 28%),
-      linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-  }
-
-  .protofire-wave {
-    background-image:
-      radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1), transparent 68%),
-      repeating-radial-gradient(
-        circle at 20% 120%,
-        rgba(255, 255, 255, 0.12) 0 1px,
-        transparent 1px 22px
-      );
-    background-size: 100% 100%, 180% 140%;
-    background-position: center, bottom left;
-    opacity: 0.85;
-  }
 }

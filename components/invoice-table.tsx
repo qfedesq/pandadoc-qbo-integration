@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { evaluateFactoringEligibility } from "@/lib/factoring/eligibility";
-import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 type FactoringInvoiceRow = Prisma.ImportedInvoiceGetPayload<{
   include: {
@@ -32,32 +32,33 @@ export function InvoiceTable({
   invoices,
   pandaDocConnected = false,
   pandaDocImportEnabled = false,
+  showPandaDocColumn = true,
 }: {
   invoices: FactoringInvoiceRow[];
   pandaDocConnected?: boolean;
   pandaDocImportEnabled?: boolean;
+  showPandaDocColumn?: boolean;
 }) {
   if (invoices.length === 0) {
     return (
-      <div className="protofire-panel rounded-[1.5rem] border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+      <div className="rounded-[1.25rem] border border-dashed border-border/80 bg-card/90 p-10 text-center text-sm text-muted-foreground">
         No invoices match the current filters.
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-[1.5rem] border border-border/70 protofire-panel shadow-panel">
+    <div className="overflow-hidden rounded-[1.25rem] border border-border/80 bg-card/95 shadow-panel">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Invoice ID</TableHead>
+            <TableHead>Invoice</TableHead>
             <TableHead>Counterparty</TableHead>
             <TableHead>Amount</TableHead>
             <TableHead>Due date</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Working capital</TableHead>
-            <TableHead>PandaDoc</TableHead>
-            <TableHead>Last synced</TableHead>
+            <TableHead>Capital</TableHead>
+            {showPandaDocColumn ? <TableHead>PandaDoc</TableHead> : null}
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -82,8 +83,12 @@ export function InvoiceTable({
             return (
               <TableRow key={invoice.id}>
                 <TableCell>
-                  <div className="font-medium text-foreground">{invoice.providerInvoiceId}</div>
-                  <div className="text-xs text-muted-foreground">{invoice.docNumber ?? "—"}</div>
+                  <div className="font-medium text-foreground">
+                    {invoice.providerInvoiceId}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {invoice.docNumber ?? "No invoice number"}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div>{invoice.counterpartyName}</div>
@@ -92,7 +97,10 @@ export function InvoiceTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {formatCurrency(invoice.balanceAmount.toString(), invoice.currency ?? "USD")}
+                  {formatCurrency(
+                    invoice.balanceAmount.toString(),
+                    invoice.currency ?? "USD",
+                  )}
                 </TableCell>
                 <TableCell>{formatDate(invoice.dueDate)}</TableCell>
                 <TableCell>
@@ -100,80 +108,68 @@ export function InvoiceTable({
                 </TableCell>
                 <TableCell>
                   <div className="space-y-2">
-                    <StatusBadge status={invoice.factoringLifecycleStatus} />
+                    <StatusBadge
+                      status={latestTransaction?.status ?? eligibility.status}
+                    />
                     {latestTransaction ? (
-                      <>
-                        <StatusBadge status={latestTransaction.status} />
-                        <div className="max-w-56 text-xs text-muted-foreground">
-                          {latestTransaction.transactionReference}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
+                      <div className="space-y-1 text-xs text-muted-foreground">
+                        <div>{latestTransaction.transactionReference}</div>
+                        <div>
                           Advanced{" "}
                           {formatCurrency(
                             latestTransaction.netProceeds.toString(),
                             latestTransaction.settlementCurrency,
-                          )}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Repays{" "}
+                          )}{" "}
+                          · repays{" "}
                           {formatCurrency(
                             latestTransaction.expectedRepaymentAmount.toString(),
                             latestTransaction.settlementCurrency,
                           )}
                         </div>
-                      </>
-                    ) : (
-                      <>
-                        <StatusBadge status={eligibility.status} />
-                        <div className="text-xs text-muted-foreground">
-                          {invoice.factoringOffer
-                            ? `Available now ${formatCurrency(
-                                invoice.factoringOffer.netProceeds.toString(),
-                                invoice.factoringOffer.settlementCurrency,
-                              )}`
-                            : "No offer generated yet"}
+                      </div>
+                    ) : invoice.factoringOffer ? (
+                      <div className="space-y-1 text-xs text-muted-foreground">
+                        <div>
+                          Available now{" "}
+                          {formatCurrency(
+                            invoice.factoringOffer.netProceeds.toString(),
+                            invoice.factoringOffer.settlementCurrency,
+                          )}
                         </div>
-                        {invoice.factoringOffer ? (
-                          <div className="text-xs text-muted-foreground">
-                            Advance rate{" "}
-                            {(invoice.factoringOffer.advanceRateBps / 100).toFixed(2)}%
-                          </div>
-                        ) : null}
-                        {eligibility.reason ? (
-                          <div className="max-w-56 text-xs text-muted-foreground">
-                            {eligibility.reason}
-                          </div>
-                        ) : (
-                          <div className="text-xs text-muted-foreground">
-                            Fee{" "}
-                            {invoice.factoringOffer
-                              ? `${(invoice.factoringOffer.discountRateBps / 100).toFixed(2)}%`
-                              : "TBD"}
-                          </div>
-                        )}
-                      </>
+                        <div>
+                          Advance rate{" "}
+                          {(invoice.factoringOffer.advanceRateBps / 100).toFixed(2)}%
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="max-w-52 text-xs text-muted-foreground">
+                        {eligibility.reason ?? "Offer not generated yet."}
+                      </div>
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="space-y-2">
-                    <PandaDocStatusBadge status={link?.pandadocDocumentStatus} />
-                    {link?.documentName ? (
-                      <div className="max-w-48 text-xs text-muted-foreground">
-                        {link.documentName}
-                      </div>
-                    ) : null}
-                    {link?.lastError ? (
-                      <div className="max-w-56 text-xs text-rose-700">{link.lastError}</div>
-                    ) : null}
-                  </div>
-                </TableCell>
-                <TableCell>{formatDateTime(invoice.lastSyncedAt)}</TableCell>
+                {showPandaDocColumn ? (
+                  <TableCell>
+                    <div className="space-y-2">
+                      <PandaDocStatusBadge status={link?.pandadocDocumentStatus} />
+                      {link?.documentName ? (
+                        <div className="max-w-48 text-xs text-muted-foreground">
+                          {link.documentName}
+                        </div>
+                      ) : null}
+                      {link?.lastError ? (
+                        <div className="max-w-56 text-xs text-rose-700">
+                          {link.lastError}
+                        </div>
+                      ) : null}
+                    </div>
+                  </TableCell>
+                ) : null}
                 <TableCell className="text-right">
                   <div className="flex flex-col items-end gap-2">
                     {latestTransaction ? (
                       <Link
-                        className="inline-flex h-10 items-center justify-center rounded-full border border-white/14 bg-white/5 px-5 text-sm font-semibold transition-all duration-300 hover:border-white/24 hover:bg-white/10"
+                        className="inline-flex h-10 items-center justify-center rounded-xl border border-border/80 px-5 text-sm font-semibold transition-colors duration-200 hover:bg-secondary/60"
                         href={`/factoring-dashboard/transactions/${latestTransaction.id}`}
                       >
                         View advance

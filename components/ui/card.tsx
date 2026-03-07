@@ -9,7 +9,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "protofire-panel rounded-[1.5rem] border border-border/70 text-card-foreground shadow-panel backdrop-blur-sm",
+        "protofire-panel rounded-[1.25rem] border border-border/80 bg-card/95 text-card-foreground shadow-panel",
         className,
       )}
       {...props}
@@ -21,7 +21,7 @@ export function CardHeader({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("space-y-1 p-6", className)} {...props} />;
+  return <div className={cn("space-y-1 p-5", className)} {...props} />;
 }
 
 export function CardTitle({
@@ -52,7 +52,7 @@ export function CardContent({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("p-6 pt-0", className)} {...props} />;
+  return <div className={cn("p-5 pt-0", className)} {...props} />;
 }
 
 export function CardFooter({
@@ -60,6 +60,6 @@ export function CardFooter({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("flex items-center gap-3 p-6 pt-0", className)} {...props} />
+    <div className={cn("flex items-center gap-3 p-5 pt-0", className)} {...props} />
   );
 }
