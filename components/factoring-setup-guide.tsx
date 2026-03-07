@@ -67,19 +67,19 @@ function SetupStep({
   detail: string;
 }) {
   return (
-    <div className="border-white/12 bg-white/6 rounded-[1.35rem] border p-5">
-      <div className="flex items-start justify-between gap-4">
+    <div className="rounded-[1rem] border border-border/80 bg-background/40 p-4">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             {step}
           </p>
-          <h3 className="mt-3 text-lg font-semibold text-white">{title}</h3>
-          <p className="mt-2 text-sm text-slate-300">{description}</p>
+          <h3 className="mt-2 text-base font-semibold text-foreground">{title}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
         <StatusBadge status={status} />
       </div>
-      <p className="mt-4 text-sm text-slate-200">{detail}</p>
-      <div className="mt-5">{action}</div>
+      <p className="mt-3 text-sm text-foreground/85">{detail}</p>
+      <div className="mt-4">{action}</div>
     </div>
   );
 }
@@ -107,37 +107,78 @@ export function FactoringSetupGuide({
   const bridgeReady = pandaDocConnected && quickBooksConnected;
   const redirectTo = "/factoring-dashboard";
 
-  return (
-    <Card className="protofire-hero border-white/12 relative overflow-hidden border">
-      <CardHeader className="relative">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+  if (bridgeReady) {
+    return (
+      <Card className="border-border/80">
+        <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-300">
-              Guided setup
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Setup complete
             </p>
-            <CardTitle className="text-white">
-              Activate working capital in three steps
-            </CardTitle>
-            <p className="max-w-3xl text-sm text-slate-300">
-              A finance team only needs to connect PandaDoc and QuickBooks with
-              the usual sign-in flows. Once both are connected, outstanding
-              invoices can be imported and turned into capital offers inside the
-              same workspace.
+            <CardTitle>Workspace ready for invoice-based funding</CardTitle>
+            <p className="max-w-3xl text-sm text-muted-foreground">
+              PandaDoc and QuickBooks are connected. The dashboard can stay
+              focused on invoices and withdrawals, while integration detail
+              stays under the dedicated settings view.
             </p>
           </div>
-          <div className="border-white/12 bg-white/8 w-fit rounded-full border px-4 py-2 text-sm font-medium text-slate-100">
-            {bridgeReady
-              ? "Ready: invoices can be imported and funded"
-              : "Complete both connections to unlock invoice funding"}
+          <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100">
+            Ready to import, price, and fund invoices
           </div>
+        </CardHeader>
+        <CardContent className="grid gap-3 md:grid-cols-3">
+          <div className="rounded-[1rem] border border-border/80 bg-background/40 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              PandaDoc
+            </p>
+            <p className="mt-2 text-sm font-medium text-foreground">
+              {pandaDocConnection?.externalAccountName ?? "Workspace connected"}
+            </p>
+          </div>
+          <div className="rounded-[1rem] border border-border/80 bg-background/40 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              QuickBooks
+            </p>
+            <p className="mt-2 text-sm font-medium text-foreground">
+              {quickBooksAccountName ?? "Company connected"}
+            </p>
+          </div>
+          <div className="rounded-[1rem] border border-border/80 bg-background/40 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Next step
+            </p>
+            <p className="mt-2 text-sm font-medium text-foreground">
+              Sync invoices and focus on `Withdraw Capital` opportunities.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-border/80">
+      <CardHeader className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Setup
+          </p>
+          <CardTitle>Connect the workspace, then focus on invoices</CardTitle>
+          <p className="max-w-3xl text-sm text-muted-foreground">
+            Only three actions are required before the seller flow is usable:
+            connect PandaDoc, connect QuickBooks, and run the first invoice sync.
+          </p>
+        </div>
+        <div className="rounded-lg border border-border/80 bg-background/50 px-4 py-2 text-sm font-medium text-foreground">
+          Complete the remaining steps to unlock withdrawals
         </div>
       </CardHeader>
-      <CardContent className="relative space-y-4">
+      <CardContent className="space-y-4">
         <div className="grid gap-4 xl:grid-cols-3">
           <SetupStep
             step="Step 1"
             title="Connect PandaDoc workspace"
-            description="Authorize the PandaDoc workspace where invoice documents and financing actions will live."
+            description="Authorize the workspace where invoice documents and financing actions will live."
             status={pandaDocConnected ? "CONNECTED" : "DISCONNECTED"}
             detail={
               pandaDocConnected
@@ -156,7 +197,7 @@ export function FactoringSetupGuide({
           <SetupStep
             step="Step 2"
             title="Connect QuickBooks company"
-            description="Authorize the accounting source of truth so open invoices can be imported automatically."
+            description="Authorize the accounting source of truth for open invoices and due dates."
             status={quickBooksConnected ? "CONNECTED" : "DISCONNECTED"}
             detail={
               quickBooksConnected
@@ -174,12 +215,12 @@ export function FactoringSetupGuide({
           />
           <SetupStep
             step="Step 3"
-            title="Import invoices and offer capital"
-            description="Refresh outstanding invoices, review eligibility, and start the Withdraw Capital flow on any approved invoice."
+            title="Import invoices and surface offers"
+            description="Refresh outstanding invoices and expose eligible `Withdraw Capital` actions."
             status={quickBooksConnected ? "CONNECTED" : "DISCONNECTED"}
             detail={
               quickBooksConnected
-                ? "Sync now to refresh invoices and surface new capital offers."
+                ? "Run sync once to load invoices and surface funding opportunities."
                 : "QuickBooks must be connected before invoice refresh can start."
             }
             action={

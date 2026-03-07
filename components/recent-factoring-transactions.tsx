@@ -24,12 +24,12 @@ export function RecentFactoringTransactions({
   transactions: FactoringTransactionWithRelations[];
 }) {
   return (
-    <Card className="border-border/70 shadow-panel">
-      <CardHeader className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+    <Card className="border-border/80">
+      <CardHeader className="space-y-1">
         <div>
           <CardTitle>Recent capital advances</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Track each capital advance from withdrawal through repayment.
+            Review recent withdrawals and open detail only when needed.
           </p>
         </div>
       </CardHeader>
@@ -40,7 +40,7 @@ export function RecentFactoringTransactions({
             create the first one.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-[1.25rem] border border-border/70">
+          <div className="overflow-hidden rounded-[1.25rem] border border-border/80">
             <Table>
               <TableHeader>
                 <TableRow>

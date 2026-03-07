@@ -15,7 +15,7 @@ export function InvoiceFilters({
 }) {
   return (
     <form
-      className="protofire-panel grid gap-3 rounded-[1.5rem] border border-border/70 p-4 md:grid-cols-[2fr_1fr_auto_auto]"
+      className="grid gap-3 rounded-[1.25rem] border border-border/80 bg-card/90 p-4 md:grid-cols-[2fr_1fr_auto_auto]"
       role="search"
     >
       <Input
@@ -36,14 +36,14 @@ export function InvoiceFilters({
           </option>
         ))}
       </Select>
-      <label className="flex items-center gap-2 rounded-full border border-border bg-white/5 px-4 text-sm font-medium text-foreground">
+      <label className="flex items-center gap-2 rounded-xl border border-border/80 bg-background/40 px-4 text-sm font-medium text-foreground">
         <input
           defaultChecked={overdueOnly}
           name="overdue"
           type="checkbox"
           value="true"
         />
-        Overdue only
+        Show only overdue
       </label>
       <Button type="submit" variant="secondary">
         Apply filters

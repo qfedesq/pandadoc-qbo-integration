@@ -55,9 +55,9 @@ const config: Config = {
       },
       boxShadow: {
         panel:
-          "0 28px 80px rgba(0, 0, 0, 0.42), 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+          "0 14px 36px rgba(0, 0, 0, 0.22), 0 2px 10px rgba(0, 0, 0, 0.12)",
         glow:
-          "0 0 0 1px rgba(245, 71, 3, 0.2), 0 14px 36px rgba(245, 71, 3, 0.28)",
+          "0 0 0 1px rgba(245, 71, 3, 0.18), 0 10px 24px rgba(245, 71, 3, 0.22)",
       },
       backgroundImage: {
         "hero-grid":

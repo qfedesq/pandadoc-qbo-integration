@@ -84,49 +84,62 @@ export default async function InvoicesPage({ searchParams }: Props) {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>QuickBooks company</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div className="text-lg font-semibold text-foreground">
+      <Card className="border-border/70 shadow-panel">
+        <CardHeader className="space-y-1">
+          <CardTitle>Workspace context</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Keep the page centered on invoice selection. Connection and import
+            state stay visible, but compressed.
+          </p>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-3">
+          <div className="rounded-[1rem] border border-border/80 bg-background/35 p-4">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              QuickBooks
+            </span>
+            <span className="mt-2 block text-base font-semibold text-foreground">
               {quickBooksAccountName ?? "Not connected"}
-            </div>
-            <p>Last sync: {formatDateTime(quickBooksConnection?.lastSyncAt)}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>Imported invoices</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div className="text-4xl font-semibold text-foreground">
-              {totalInvoices}
-            </div>
-            <p>
-              {eligibleInvoicesCount} invoices are immediately eligible for
-              withdrawal across the workspace.
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>PandaDoc import</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div className="text-lg font-semibold text-foreground">
+            </span>
+            <span className="mt-1 block">
+              Last sync: {formatDateTime(quickBooksConnection?.lastSyncAt)}
+            </span>
+          </div>
+          <div className="rounded-[1rem] border border-border/80 bg-background/35 p-4">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              Invoices ready
+            </span>
+            <span className="mt-2 block text-3xl font-semibold text-foreground">
+              {eligibleInvoicesCount}
+            </span>
+            <span className="mt-1 block">
+              out of {totalInvoices} imported invoices.
+            </span>
+          </div>
+          <div className="rounded-[1rem] border border-border/80 bg-background/35 p-4">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              PandaDoc import
+            </span>
+            <span className="mt-2 block text-base font-semibold text-foreground">
               {pandaDocConnection?.status === "CONNECTED"
                 ? "Connected"
                 : "Optional for demo"}
-            </div>
-            <p>
+            </span>
+            <span className="mt-1 block">
               {hasPandaDocImportConfig()
-                ? "Ready to turn an invoice into a PandaDoc document."
+                ? "Invoice-to-document import is ready."
                 : getProviderOauthConfigurationMessage(Provider.PANDADOC)}
-            </p>
-          </CardContent>
-        </Card>
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-1">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          Invoices
+        </p>
+        <h2 className="font-[var(--font-heading)] text-2xl font-semibold tracking-tight">
+          Imported receivables
+        </h2>
       </div>
 
       <InvoiceFilters

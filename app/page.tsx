@@ -1,28 +1,22 @@
 import Link from "next/link";
-import { ArrowRight, DatabaseZap, ShieldCheck, Workflow } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { AppBrand } from "@/components/app-brand";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-const features = [
+const demoSteps = [
   {
-    title: "Embedded working capital",
-    description:
-      "Let finance teams unlock cash from outstanding invoices without leaving the PandaDoc workflow.",
-    icon: ShieldCheck,
+    title: "Connect systems",
+    description: "Link PandaDoc and QuickBooks once. Keep setup lightweight.",
   },
   {
-    title: "QuickBooks invoice import",
-    description:
-      "Pull unpaid invoices into a clean dashboard with eligibility, terms, and one-click capital withdrawal.",
-    icon: DatabaseZap,
+    title: "Prioritize eligible invoices",
+    description: "Surface only the receivables that can become immediate liquidity.",
   },
   {
-    title: "Retention and monetization",
-    description:
-      "Show how every funded invoice can create seller value, capital-provider yield, and a fee stream for PandaDoc.",
-    icon: Workflow,
+    title: "Withdraw and track repayment",
+    description: "Advance capital in one click and follow the lifecycle end to end.",
   },
 ];
 
@@ -34,7 +28,7 @@ export default function HomePage() {
           <div className="space-y-7">
             <AppBrand className="w-fit" />
             <div className="space-y-4">
-              <span className="inline-flex rounded-full border border-white/12 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-slate-200">
+              <span className="inline-flex rounded-lg border border-white/12 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-slate-200">
                 Embedded finance for PandaDoc
               </span>
               <h1 className="max-w-4xl font-[var(--font-heading)] text-5xl font-semibold tracking-tight text-balance text-white md:text-6xl">
@@ -58,35 +52,48 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <Card className="protofire-hero relative overflow-hidden border border-white/12">
-            <div className="protofire-wave absolute inset-0 opacity-35" />
-            <CardContent className="relative space-y-4 p-8">
-              <div className="rounded-[1.25rem] border border-white/12 bg-white/6 p-5 backdrop-blur">
+          <Card className="border border-white/12">
+            <CardContent className="space-y-6 p-8">
+              <div className="space-y-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-300">
-                  Current milestone
+                  Demo flow
                 </p>
-                <h2 className="mt-3 font-[var(--font-heading)] text-2xl font-semibold text-white">
-                  Import invoices. Offer capital. Simulate repayment.
+                <h2 className="font-[var(--font-heading)] text-2xl font-semibold text-white">
+                  A tighter seller journey, not a noisy finance console.
                 </h2>
-                <p className="mt-2 text-sm text-slate-300">
-                  This MVP demonstrates the full loop: invoice sync, indicative
-                  terms, withdrawal, provider yield, platform fees, and repayment
-                  tracking in one workflow.
+                <p className="text-sm text-slate-300">
+                  The interface is designed to keep attention on one decision:
+                  which eligible invoice should be converted into working capital now.
                 </p>
               </div>
               <div className="grid gap-3">
-                {features.map((feature) => (
+                {demoSteps.map((step, index) => (
                   <div
-                    key={feature.title}
-                    className="rounded-[1.25rem] border border-white/12 bg-white/6 p-5 backdrop-blur"
+                    key={step.title}
+                    className="grid gap-3 rounded-[1rem] border border-white/12 bg-white/4 p-4 md:grid-cols-[auto_1fr]"
                   >
-                    <feature.icon className="h-5 w-5 text-primary" />
-                    <h3 className="mt-3 font-semibold text-white">{feature.title}</h3>
-                    <p className="mt-1 text-sm text-slate-300">
-                      {feature.description}
-                    </p>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/12 bg-white/6 text-sm font-semibold text-primary">
+                      0{index + 1}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">{step.title}</h3>
+                      <p className="mt-1 text-sm text-slate-300">
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
                 ))}
+              </div>
+              <div className="grid gap-3 border-t border-white/10 pt-5 text-sm text-slate-300 md:grid-cols-3">
+                <div className="rounded-[1rem] border border-white/10 bg-white/4 p-4">
+                  Seller value: faster cash flow from open invoices.
+                </div>
+                <div className="rounded-[1rem] border border-white/10 bg-white/4 p-4">
+                  Provider value: funded positions with tracked repayment.
+                </div>
+                <div className="rounded-[1rem] border border-white/10 bg-white/4 p-4">
+                  PandaDoc value: retention and fee revenue inside workflow.
+                </div>
               </div>
             </CardContent>
           </Card>

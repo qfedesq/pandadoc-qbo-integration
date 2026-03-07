@@ -78,38 +78,40 @@ export default async function TransactionsPage({ searchParams }: Props) {
         </Button>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>Total advances</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-semibold text-foreground">
+      <Card className="border-border/70 shadow-panel">
+        <CardHeader className="space-y-1">
+          <CardTitle>Portfolio snapshot</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Keep the summary tight so the transaction table carries the real detail.
+          </p>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-3">
+          <div className="rounded-[1rem] border border-border/80 bg-background/35 p-4">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              Total advances
+            </span>
+            <span className="mt-2 block text-3xl font-semibold text-foreground">
               {totalTransactions}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>Active advances</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-semibold text-foreground">
+            </span>
+          </div>
+          <div className="rounded-[1rem] border border-border/80 bg-background/35 p-4">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              Active
+            </span>
+            <span className="mt-2 block text-3xl font-semibold text-foreground">
               {activeCount}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>Capital received</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-semibold text-foreground">
+            </span>
+          </div>
+          <div className="rounded-[1rem] border border-border/80 bg-background/35 p-4">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              Capital received
+            </span>
+            <span className="mt-2 block text-xl font-semibold text-foreground">
               {formatCurrency(totalCapitalReceived.toString(), "USDC")}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </span>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="border-border/70 shadow-panel">
         <CardHeader>

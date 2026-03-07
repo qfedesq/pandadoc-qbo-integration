@@ -5,7 +5,6 @@ import {
 } from "@prisma/client";
 import Link from "next/link";
 
-import { FactoringConnectionCard } from "@/components/factoring-connection-card";
 import { InvoiceFilters } from "@/components/invoice-filters";
 import { FactoringSetupGuide } from "@/components/factoring-setup-guide";
 import { InvoiceTable } from "@/components/invoice-table";
@@ -96,6 +95,7 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
       currency: "USDC",
     }),
   ]);
+
   const latestSync = quickBooksConnection
     ? await getLatestSyncRun(quickBooksConnection.id)
     : null;
@@ -109,20 +109,20 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
     quickBooksConnection && quickBooksConnected
       ? getNextInvoiceSyncAt(quickBooksConnection.lastSyncAt)
       : null;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             PandaDoc embedded finance
           </p>
           <h1 className="text-4xl font-[var(--font-heading)] font-semibold tracking-tight">
             Working capital dashboard
           </h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Connect QuickBooks, import outstanding invoices, review eligible
-            receivables, and let finance teams withdraw capital directly inside
-            the PandaDoc workflow.
+            Review eligible invoices, keep connection setup out of the way, and
+            focus the seller experience on immediate capital actions.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -151,35 +151,8 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
         }}
       />
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <FactoringConnectionCard
-          provider={Provider.PANDADOC}
-          label="PandaDoc account"
-          description="Workspace where invoice approvals and capital actions stay inside the PandaDoc experience."
-          connection={pandaDocConnection}
-          metadataLabel="Workspace / account ID"
-          metadataValue={pandaDocConnection?.externalAccountId ?? "—"}
-          providerConfigured={pandaDocConfigured}
-          configurationMessage={getProviderOauthConfigurationMessage(
-            Provider.PANDADOC,
-          )}
-        />
-        <FactoringConnectionCard
-          provider={Provider.QUICKBOOKS}
-          label="QuickBooks company"
-          description="Accounting source of truth for unpaid invoices, balances, and due dates."
-          connection={quickBooksConnection}
-          metadataLabel="Realm ID"
-          metadataValue={quickBooksConnection?.externalAccountId ?? "—"}
-          providerConfigured={quickBooksConfigured}
-          configurationMessage={getProviderOauthConfigurationMessage(
-            Provider.QUICKBOOKS,
-          )}
-        />
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-5">
-        <Card className="border-border/70 shadow-panel">
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card className="border-border/80">
           <CardHeader>
             <CardTitle>Eligible invoices</CardTitle>
           </CardHeader>
@@ -188,12 +161,12 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
               {eligibleInvoicesCount}
             </div>
             <p>
-              Outstanding invoices with a due date and no active advance can
-              receive a capital offer.
+              Receivables with open status, future due date, and no active
+              advance.
             </p>
           </CardContent>
         </Card>
-        <Card className="border-border/70 shadow-panel">
+        <Card className="border-border/80">
           <CardHeader>
             <CardTitle>Capital received</CardTitle>
           </CardHeader>
@@ -201,12 +174,10 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
             <div className="text-2xl font-semibold text-foreground">
               {formatCurrency(sellerWalletBalance.toString(), "USDC")}
             </div>
-            <p>
-              Demo wallet balance credited after successful capital withdrawals.
-            </p>
+            <p>Demo wallet balance credited after successful withdrawals.</p>
           </CardContent>
         </Card>
-        <Card className="border-border/70 shadow-panel">
+        <Card className="border-border/80">
           <CardHeader>
             <CardTitle>Active advances</CardTitle>
           </CardHeader>
@@ -214,64 +185,45 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
             <div className="text-4xl font-semibold text-foreground">
               {activeTransactionsCount}
             </div>
-            <p>
-              Invoices currently funded and waiting for repayment to complete.
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>Funding capacity</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div className="text-2xl font-semibold text-foreground">
-              {formatCurrency(
-                capitalSource.availableLiquidity.toString(),
-                "USDC",
-              )}
-            </div>
-            <p>Capital currently available for new withdrawals in the demo.</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/70 shadow-panel">
-          <CardHeader>
-            <CardTitle>Completed repayments</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div className="text-4xl font-semibold text-foreground">
-              {repaidTransactionsCount}
-            </div>
-            <p>
-              Funded invoices that have already settled back to the capital
-              provider.
-            </p>
+            <p>Funded invoices that are still waiting for repayment.</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-border/70 shadow-panel">
+      <Card className="border-border/80">
         <CardHeader>
-          <CardTitle>Sync operations</CardTitle>
+          <CardTitle>Operational context</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-2 xl:grid-cols-4">
+        <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-2 xl:grid-cols-5">
           <div>
-            <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
-              Periodic sync
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              Funding capacity
             </span>
             <span className="mt-1 block font-medium text-foreground">
-              {syncConfig.enabled ? "Enabled" : "Disabled"}
+              {formatCurrency(
+                capitalSource.availableLiquidity.toString(),
+                "USDC",
+              )}
             </span>
           </div>
           <div>
-            <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
-              Interval
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              Imported invoices
             </span>
             <span className="mt-1 block font-medium text-foreground">
-              Every {syncConfig.intervalMinutes} minute(s)
+              {totalInvoices}
             </span>
           </div>
           <div>
-            <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+              Completed repayments
+            </span>
+            <span className="mt-1 block font-medium text-foreground">
+              {repaidTransactionsCount}
+            </span>
+          </div>
+          <div>
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
               Last sync
             </span>
             <span className="mt-1 block font-medium text-foreground">
@@ -279,7 +231,7 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
             </span>
           </div>
           <div>
-            <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
+            <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
               Next scheduled sync
             </span>
             <span className="mt-1 block font-medium text-foreground">
@@ -288,18 +240,65 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
                 : "Connect QuickBooks first"}
             </span>
           </div>
-          <div className="md:col-span-2 xl:col-span-4">
-            <span className="block text-xs font-semibold uppercase tracking-[0.2em]">
-              Latest run
-            </span>
-            <span className="mt-1 block font-medium text-foreground">
-              {latestSync
-                ? `${latestSync.status} at ${formatDateTime(latestSync.startedAt)}`
-                : "No sync runs recorded yet"}
-            </span>
+          <div className="md:col-span-2 xl:col-span-5 flex flex-wrap gap-x-6 gap-y-2 border-t border-border/70 pt-4">
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+                Periodic sync
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                {syncConfig.enabled
+                  ? `Enabled every ${syncConfig.intervalMinutes} minute(s)`
+                  : "Disabled"}
+              </span>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+                Latest run
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                {latestSync
+                  ? `${latestSync.status} at ${formatDateTime(latestSync.startedAt)}`
+                  : "No sync runs recorded yet"}
+              </span>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+                PandaDoc import
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                {pandaDocImportEnabled
+                  ? "Ready"
+                  : "Template configuration pending"}
+              </span>
+            </div>
+            <div>
+              <span className="block text-xs font-semibold uppercase tracking-[0.18em]">
+                Connections
+              </span>
+              <span className="mt-1 block font-medium text-foreground">
+                {pandaDocConnected && quickBooksConnected
+                  ? "PandaDoc + QuickBooks connected"
+                  : "One or more connections pending"}
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          Invoices
+        </p>
+        <div className="space-y-1">
+          <h2 className="font-[var(--font-heading)] text-2xl font-semibold tracking-tight">
+            Imported receivables
+          </h2>
+          <p className="max-w-3xl text-sm text-muted-foreground">
+            Keep attention on eligible invoices first. Secondary metadata stays
+            inline instead of competing with the primary action.
+          </p>
+        </div>
+      </div>
 
       <InvoiceFilters
         overdueOnly={query.overdue}
@@ -311,6 +310,7 @@ export default async function FactoringDashboardPage({ searchParams }: Props) {
         invoices={invoices}
         pandaDocConnected={pandaDocConnected}
         pandaDocImportEnabled={pandaDocImportEnabled}
+        showPandaDocColumn={false}
       />
 
       <QueryPagination
